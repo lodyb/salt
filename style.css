@@ -20,9 +20,9 @@ main{
 }
 
 div.player{
-	width:48px;
-	height:64px;
-	background:red;
+	width:96px;
+	height:128px;
+	background:url('player_1.png');
 }
 div.player.happy{
 	background:green;
