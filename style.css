@@ -1,0 +1,19 @@
+html,body{
+	border:0;
+	padding:0;
+	background:#0c0f12;
+}
+
+main{
+	width:900px;
+	height:600px;
+	position:absolute;
+	background:#000;
+	left:50%;
+	top:50%;
+	margin-left:-450px;
+	margin-top:-300px;
+	color:#d3cbf8;
+	text-align:center;
+	line-height:600px;
+}
