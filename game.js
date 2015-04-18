@@ -1,5 +1,12 @@
 +function(){
 	console.log('ready');
+
+	var game = document.getElementsByTagName('main')[0];
+	var hero = document.createElement("div");
+	hero.setAttribute("class","player");
+	game.appendChild(hero);
+
+
 }()
 
 // things to do:
@@ -21,10 +28,14 @@
 // every 30s survived gives another seed to plant
 // time survived before all plants dead is score
 
-function ent_create() {
+function ent_create(ent) {
 
 }
 
-function is_touching() {
+function is_touching(ent) {
+
+}
+
+function move_to(ent, dx, dy) {
 
 }
