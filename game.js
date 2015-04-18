@@ -42,7 +42,7 @@ var Player = {
 	create: function(parent) {
 		this.parent = parent;
 		this.element = document.createElement('div');
-		this.element.setAttribute('class', 'Player_Default');
+		this.element.setAttribute('class', 'player');
 		this.parent.element.appendChild(this.element);
 		console.log('added Player');
 	}
@@ -58,7 +58,7 @@ var Plant = {
 	create: function(parent) {
 		this.parent = parent;
 		this.element = document.createElement('div');
-		this.element.setAttribute('class', 'Plant_Default');
+		this.element.setAttribute('class', 'plant');
 		this.parent.element.appendChild(this.element);
 		console.log('added Plant');
 	}
@@ -73,7 +73,7 @@ var Enemy = {
 	create: function(parent) {
 		this.parent = parent;
 		this.element = document.createElement('div');
-		this.element.setAttribute('class', 'Enemy_Default');
+		this.element.setAttribute('class', 'enemy');
 		this.parent.element.appendChild(this.element);
 		console.log('added Enemy');
 	}
