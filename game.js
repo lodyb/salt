@@ -1,13 +1,18 @@
-+function(){
-	console.log('ready');
 
-	var game = document.getElementsByTagName('main')[0];
-	var hero = document.createElement("div");
-	hero.setAttribute("class","player");
-	game.appendChild(hero);
+var Game = {
 
+	element: null,
+	player: null,
+	plant_list: [],
+	enemy_list: [],
 
-}()
+	create: function() {
+		console.log('init game');
+		this.element = document.getElementsByTagName('main')[0];
+		this.player = Object.create(Player); this.player.create(this);
+	}
+
+};
 
 // things to do:
 // initialise world (bg, foreground, ui)
@@ -28,14 +33,57 @@
 // every 30s survived gives another seed to plant
 // time survived before all plants dead is score
 
-function ent_create(ent) {
 
-}
+var Player = {
 
-function is_touching(ent) {
+	element: null,
+	parent: null,
 
-}
+	create: function(parent) {
+		this.parent = parent;
+		this.element = document.createElement('div');
+		this.element.setAttribute('class', 'Player_Default');
+		this.parent.element.appendChild(this.element);
+		console.log('added Player');
+	}
 
-function move_to(ent, dx, dy) {
+};
 
-}
+
+var Plant = {
+
+	element: null,
+	parent: null,
+
+	create: function(parent) {
+		this.parent = parent;
+		this.element = document.createElement('div');
+		this.element.setAttribute('class', 'Plant_Default');
+		this.parent.element.appendChild(this.element);
+		console.log('added Plant');
+	}
+
+};
+
+var Enemy = {
+
+	element: null,
+	parent: null,
+
+	create: function(parent) {
+		this.parent = parent;
+		this.element = document.createElement('div');
+		this.element.setAttribute('class', 'Enemy_Default');
+		this.parent.element.appendChild(this.element);
+		console.log('added Enemy');
+	}
+
+};
+
++function() {
+	console.log('ready');
+	var game = Object.create(Game);
+	game.create();
+}();
+
+
