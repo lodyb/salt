@@ -20,7 +20,7 @@ var Game = {
 	plant_list: [],
 	enemy_list: [],
 	/* grid_x/grid_y is the location relative to the plant list */
-	salt_dock: {x: 50, y: 50, grid_x: -1, grid_y: -1},
+	salt_dock: {x: 20, y: 200, grid_x: -1, grid_y: -1},
 	keys: {
 		up: false, down: false, left: false, right: false,
 		space: false, q: false,
@@ -33,10 +33,9 @@ var Game = {
 		this.player.set_pos(this.salt_dock.grid_x, this.salt_dock.grid_y);
 
 		this.add_plants([
-			[{x: 150, y: 50}, {x: 400, y: 50}, {x: 650, y: 50}],
-			[{x: 270, y: 200}, {x: 530, y: 200}],
-			[{x: 150, y: 350}, {x: 400, y: 350}, {x: 650, y: 350}],
-			[{x: 270, y: 500}, {x: 530, y: 500}],
+			[{x: 150, y: 245}, {x: 400, y: 228}, {x: 650, y: 233}],
+			[{x: 106, y: 378}, {x: 329, y: 356}, {x: 550, y: 363}, {x: 758, y: 390}],
+			[{x: 152, y: 486}, {x: 375, y: 476}, {x: 589, y: 491}, {x: 790, y: 532}],,
 		]);
 	},
 
