@@ -1,39 +1,134 @@
 
-// things to do:
-// initialise world (bg, foreground, ui)
-// initialise hero (with keyboard controls)
-// initialise other entities (plants, regen)
-// initialise triggers (loop to see if we are touching ents?)
-// initialise enemies (snails)
+/**
+ * keycode constants
+ */
+var KeyCodes = {
 
-// html/js is event based so i dont think it will need a main loop
-// we should just use the event handlers (keyboard, timers, touchtriggers)
-// and let the DOM do our painting for us
+	w: 87, a: 65, s: 83, d: 68,
+	up: 38, down: 40, left: 37, right: 39,
+	space: 32, q: 81,
 
-// here's how i think it will go:
-// game is started
-// plant a few seeds to start to create plants in garden
-// then snails will come on a timer and you have to salt them hold space
-// need to keep recharging salt at the salt well
-// every 30s survived gives another seed to plant
-// time survived before all plants dead is score
+}
 
-
+/**
+ * game object
+ */
 var Game = {
 
 	element: null,
 	player: null,
 	plant_list: [],
 	enemy_list: [],
+	keys: {
+		up: false, down: false, left: false, right: false,
+		space: false, q: false,
+	},
 
 	create: function() {
 		console.log('init game');
 		this.element = document.getElementsByTagName('main')[0];
 		this.player = Object.create(Player); this.player.create(this);
+		this.player.set_pos(50, 50);
+		this.add_plants([
+			[{x: 150, y: 50}, {x: 400, y: 50}, {x: 650, y: 50}],
+			[{x: 270, y: 200}, {x: 530, y: 200}],
+			[{x: 150, y: 350}, {x: 400, y: 350}, {x: 650, y: 350}],
+			[{x: 270, y: 500}, {x: 530, y: 500}],
+		]);
+	},
+
+	add_plants: function(arr) {
+		for (var i = 0; i < arr.length; i++) {
+			this.plant_list.push([]);
+			for (var y = 0; y < arr[i].length; y++) {
+				var obj = arr[i][y];
+				var n = this.plant_list[i].push(Object.create(Plant));
+				this.plant_list[i][n - 1].create(this);
+				this.plant_list[i][n - 1].set_pos(obj.x, obj.y)
+			}
+		}
+	},
+
+	on_keydown: function(e) {
+		if (e.repeat) return;
+		var c = (e.keyCode ? e.keyCode : e.which);
+		if (c == KeyCodes.w || c == KeyCodes.up) {
+			if (!this.keys.up) {
+				this.keys.up = true;
+				// move up
+				console.log('move_up');
+			}
+			else this.keys.up = false;
+		}
+		else if (c == KeyCodes.a || c == KeyCodes.left) {
+			if (!this.keys.left) {
+				this.keys.left = true;
+				// move left
+				console.log('move_left');
+			}
+			else this.keys.left = false;
+		}
+		else if (c == KeyCodes.s || c == KeyCodes.down) {
+			if (!this.keys.down) {
+				this.keys.down = true;
+				// move down
+				console.log('move_down');
+			}
+			else this.keys.down = false;
+		}
+		else if (c == KeyCodes.d || c == KeyCodes.right) {
+			if (!this.keys.right) {
+				this.keys.right = true;
+				// move right
+				console.log('move_right');
+			}
+			else this.keys.right = false;
+		}
+		else if (c == KeyCodes.space) {
+			if (!this.keys.space) {
+				this.keys.space = true;
+				// space
+				console.log('do space');
+			}
+			else this.keys.space = false;
+		}
+		else if (c == KeyCodes.q) {
+			if (!this.keys.q) {
+				this.keys.q = true;
+				// q
+				console.log('do q');
+			}
+			else this.keys.q = false;
+		}
+	},
+
+	on_keyup: function(e) {
+		if (e.repeat) return;
+		var c = (e.keyCode ? e.keyCode : e.which);
+		if (c == KeyCodes.w || c == KeyCodes.up)
+			this.keys.up = false;
+		else if (c == KeyCodes.a || c == KeyCodes.left) {
+			this.keys.left = false;
+		}
+		else if (c == KeyCodes.s || c == KeyCodes.down) {
+			this.keys.down = false;
+		}
+		else if (c == KeyCodes.d || c == KeyCodes.right) {
+			this.keys.right = false;
+		}
+		else if (c == KeyCodes.space) {
+			this.keys.space = false;
+		}
+		else if (c == KeyCodes.q) {
+			this.keys.q = false;
+		}
 	}
 
 };
 
+/**
+ * player object
+ */
 var Player = {
 
 	element: null,
@@ -44,7 +139,14 @@ var Player = {
 		this.element = document.createElement('div');
 		this.element.setAttribute('class', 'player');
 		this.parent.element.appendChild(this.element);
+		this.element.style.position = 'absolute';
+		this.set_pos(0, 0);
 		console.log('added Player');
+	},
+
+		set_pos: function(x, y) {
+		this.element.style.left = x.toString() + 'px';
+		this.element.style.top = y.toString() + 'px';
 	},
 
 	happy: function() {
@@ -69,7 +171,9 @@ var Player = {
 
 };
 
-
+/**
+ * friendly plant object
+ */
 var Plant = {
 
 	element: null,
@@ -81,8 +185,16 @@ var Plant = {
 		this.element = document.createElement('div');
 		this.element.setAttribute('class', 'plant spawn');
 		this.parent.element.appendChild(this.element);
+		this.element.style.position = 'absolute';
+		this.set_pos(0, 0);
 		console.log('added Plant');
 	},
+
+	set_pos: function(x, y) {
+		this.element.style.left = x.toString() + 'px';
+		this.element.style.top = y.toString() + 'px';
+	},
+
 
 	hurt: function(dmg) {
 		this.health -= dmg;
@@ -96,6 +208,9 @@ var Plant = {
 
 };
 
+/**
+ * enemy snail object
+ */
 var Enemy = {
 
 	element: null,
@@ -106,15 +221,31 @@ var Enemy = {
 		this.element = document.createElement('div');
 		this.element.setAttribute('class', 'enemy');
 		this.parent.element.appendChild(this.element);
+		this.element.style.position = 'absolute';
+		this.set_pos(0, 0);
 		console.log('added Enemy');
-	}
+	},
+
+	set_pos: function(x, y) {
+		this.element.style.left = x.toString() + 'px';
+		this.element.style.top = y.toString() + 'px';
+	},
 
 };
 
-+function() {
+/**
+ * init game after all resources have loaded
+ */
+window.onload = function() {
 	console.log('ready');
 	var game = Object.create(Game);
 	game.create();
-}();
+	document.addEventListener('keydown', function(e) { game.on_keydown(e); });
+	document.addEventListener('keyup', function(e) { game.on_keyup(e); });
+};
 
+/**
+ * load/inject resources
+ */
+console.log('loading');
 
