@@ -19,6 +19,7 @@ main{
 }
 
 div.player{
+	z-index: 100;
 	width:48px;
 	height:64px;
 	background:red;
@@ -74,4 +75,3 @@ div.plant.die{
 	margin-top: 200px + (this.y/2);
 }
 
-0 1 2 3 4 5 6 = 300px, 200px

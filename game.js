@@ -19,6 +19,8 @@ var Game = {
 	player: null,
 	plant_list: [],
 	enemy_list: [],
+	/* grid_x/grid_y is the location relative to the plant list */
+	salt_dock: {x: 50, y: 50, grid_x: -1, grid_y: -1},
 	keys: {
 		up: false, down: false, left: false, right: false,
 		space: false, q: false,
@@ -28,7 +30,8 @@ var Game = {
 		console.log('init game');
 		this.element = document.getElementsByTagName('main')[0];
 		this.player = Object.create(Player); this.player.create(this);
-		this.player.set_pos(50, 50);
+		this.player.set_pos(this.salt_dock.grid_x, this.salt_dock.grid_y);
+
 		this.add_plants([
 			[{x: 150, y: 50}, {x: 400, y: 50}, {x: 650, y: 50}],
 			[{x: 270, y: 200}, {x: 530, y: 200}],
@@ -49,6 +52,92 @@ var Game = {
 		}
 	},
 
+	/**
+	 * input
+	 */
+
+	move_up: function() {
+		console.log('move_up');
+	},
+
+	move_down: function() {
+		console.log('move_down');
+		var pos = this.player.get_pos();
+		if (pos.x == -1) return;
+		if (pos.y < this.plant_list.length - 1) {
+			pos.y += 1;
+			if (this.keys.left) {
+				/* shortest path down left */
+				if (pos.x == -1) return;
+				if (pos.x == 0) {
+					this.player.set_pos(pos.x, pos.y);
+					return;
+				}
+				pos.x -= 1;
+				this.player.set_pos(pos.x, pos.y);
+			}
+			else if (this.keys.right) {
+				/* shortest path down right */
+				if (pos.x > this.plant_list[pos.y].length -1) {
+					this.player.set_pos(pos.x -1, pos.y);
+				}
+				else if (pos.x == this.plant_list[pos.y].length -1) {
+					this.player.set_pos(pos.x, pos.y);
+				}
+				else {
+					if (this.plant_list[pos.y -1][pos.x].x <= this.plant_list[pos.y][pos.x].x) {
+						this.player.set_pos(pos.x, pos.y);
+						return;
+					}
+					else this.player.set_pos(pos.x + 1, pos.y);
+				}
+			}
+			else {
+				/* shortest path down */
+				if (pos.x > this.plant_list[pos.y].length -1) {
+					this.player.set_pos(pos.x - 1, pos.y);
+				}
+				else if (pos.x == 0) {
+					this.player.set_pos(pos.x, pos.y);
+				}
+				else if (this.plant_list[pos.y -1][pos.x].x <= this.plant_list[pos.y][pos.x].x) {
+					this.player.set_pos(pos.x, pos.y);
+					return;
+				}
+				else this.player.set_pos(pos.x + 1, pos.y);
+			}
+		}
+	},
+
+	move_left: function() {
+		var pos = this.player.get_pos();
+		if (pos.x == 0 && pos.y == 0) {
+			this.player.set_pos(-1, -1);
+		}
+		else if (pos.x > 0) {
+			this.player.set_pos(pos.x - 1, pos.y);
+		}
+	},
+
+	move_right: function() {
+		console.log('move_right');
+		var pos = this.player.get_pos();
+		if (pos.x == -1) {
+			this.player.set_pos(0, 0);
+		}
+		else if (pos.x < this.plant_list[pos.y].length - 1) {
+			this.player.set_pos(pos.x + 1, pos.y);
+		}
+	},
+
+	do_space: function() {
+		console.log('do_space');
+	},
+
+	do_q: function() {
+		console.log('do_q');
+	},
+
 	on_keydown: function(e) {
 		if (e.repeat) return;
 		var c = (e.keyCode ? e.keyCode : e.which);
@@ -56,7 +145,7 @@ var Game = {
 			if (!this.keys.up) {
 				this.keys.up = true;
 				// move up
-				console.log('move_up');
+				this.move_up();
 			}
 			else this.keys.up = false;
 		}
@@ -64,7 +153,7 @@ var Game = {
 			if (!this.keys.left) {
 				this.keys.left = true;
 				// move left
-				console.log('move_left');
+				this.move_left();
 			}
 			else this.keys.left = false;
 		}
@@ -72,7 +161,7 @@ var Game = {
 			if (!this.keys.down) {
 				this.keys.down = true;
 				// move down
-				console.log('move_down');
+				this.move_down();
 			}
 			else this.keys.down = false;
 		}
@@ -80,7 +169,7 @@ var Game = {
 			if (!this.keys.right) {
 				this.keys.right = true;
 				// move right
-				console.log('move_right');
+				this.move_right();
 			}
 			else this.keys.right = false;
 		}
@@ -88,7 +177,7 @@ var Game = {
 			if (!this.keys.space) {
 				this.keys.space = true;
 				// space
-				console.log('do space');
+				this.do_space();
 			}
 			else this.keys.space = false;
 		}
@@ -96,7 +185,7 @@ var Game = {
 			if (!this.keys.q) {
 				this.keys.q = true;
 				// q
-				console.log('do q');
+				this.do_q();
 			}
 			else this.keys.q = false;
 		}
@@ -133,6 +222,8 @@ var Player = {
 
 	element: null,
 	parent: null,
+	x: -1,
+	y: -1,
 
 	create: function(parent) {
 		this.parent = parent;
@@ -140,13 +231,25 @@ var Player = {
 		this.element.setAttribute('class', 'player');
 		this.parent.element.appendChild(this.element);
 		this.element.style.position = 'absolute';
-		this.set_pos(0, 0);
+		this.set_pos(-1, -1);
 		console.log('added Player');
 	},
 
-		set_pos: function(x, y) {
-		this.element.style.left = x.toString() + 'px';
-		this.element.style.top = y.toString() + 'px';
+	set_pos: function(x, y) {
+		if (x == -1) {
+			this.x = x; this.y = y;
+			this.element.style.left = this.parent.salt_dock.x.toString() + 'px';
+			this.element.style.top = this.parent.salt_dock.y.toString() + 'px';
+		}
+		else {
+			this.x = x; this.y = y;
+			this.element.style.left = this.parent.plant_list[this.y][this.x].x.toString() + 'px';
+			this.element.style.top = this.parent.plant_list[this.y][this.x].y.toString() + 'px';
+		}
+	},
+
+	get_pos: function() {
+		return {x: this.x, y: this.y};
 	},
 
 	happy: function() {
@@ -179,6 +282,8 @@ var Plant = {
 	element: null,
 	parent: null,
 	health: 5,
+	x: 0,
+	y: 0,
 
 	create: function(parent) {
 		this.parent = parent;
@@ -191,8 +296,13 @@ var Plant = {
 	},
 
 	set_pos: function(x, y) {
+		this.x = x; this.y = y;
 		this.element.style.left = x.toString() + 'px';
 		this.element.style.top = y.toString() + 'px';
+	},
+
+	get_pos: function() {
+		return {x: this.x, y: this.y};
 	},
 
 
@@ -215,6 +325,8 @@ var Enemy = {
 
 	element: null,
 	parent: null,
+	x: 0,
+	y: 0,
 
 	create: function(parent) {
 		this.parent = parent;
@@ -227,8 +339,13 @@ var Enemy = {
 	},
 
 	set_pos: function(x, y) {
+		this.x = x; this.y = y;
 		this.element.style.left = x.toString() + 'px';
 		this.element.style.top = y.toString() + 'px';
+	},
+
+	get_pos: function() {
+		return {x: this.x, y: this.y};
 	},
 
 };
