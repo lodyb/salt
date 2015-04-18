@@ -67,3 +67,9 @@ div.plant.hp1{
 div.plant.die{
 	background:blue;
 }
+
+div.enemy{
+	background:url('snail.png');
+	width:96px;
+	height:128px;
+}
