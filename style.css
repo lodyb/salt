@@ -16,13 +16,14 @@ main{
 	color:#d3cbf8;
 	text-align:center;
 	line-height:600px;
+	background:url('bg.png');
 }
 
 div.player{
 	z-index: 100;
-	width:48px;
-	height:64px;
-	background:red;
+	width:96px;
+	height:128px;
+	background:url('player_1.png');
 }
 div.player.happy{
 	background:green;
@@ -41,37 +42,34 @@ div.player.worry{
 }
 
 div.plant{
-	background:lightblue;
+	background:transparent;
 	width:64px;
 	height:64px;
+	transition:background 0.2s linear;
 }
 div.plant.spawn{
-	background:yellow;
+	background:url('hp5.png');
 }
 div.plant.hp5{
-	background:blue;
+	background:url('hp5.png');
 }
 div.plant.hp4{
-	background:green;
+	background:url('hp4.png');
 }
 div.plant.hp3{
-	background:orange;
+	background:url('hp3.png');
 }
 div.plant.hp2{
-	background:yellow;
+	background:url('hp2.png');
 }
 div.plant.hp1{
-	background:red;
+	background:url('hp1.png');
 }
 div.plant.die{
-	background:grey;
+	background:blue;
 }
-
-.test{
-	position:absolute;
-	left:50%;
-	top:50%;
-	margin-left: 300px + (this.x/2);
-	margin-top: 200px + (this.y/2);
+div.enemy{
+	background:url('snail.png');
+	width:96px;
+	height:128px;
 }
-
