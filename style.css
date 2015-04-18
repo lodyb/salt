@@ -23,9 +23,55 @@ div.player{
 	height:64px;
 	background:red;
 }
+div.player.happy{
+	background:green;
+}
+div.player.die{
+	background:green;
+}
+div.player.full_salt{
+	background:green;
+}
+div.player.plant{
+	background:green;
+}
+div.player.worry{
+	background:green;
+}
+
+div.plant{
+	background:lightblue;
+	width:64px;
+	height:64px;
+}
+div.plant.spawn{
+	background:yellow;
+}
+div.plant.hp5{
+	background:blue;
+}
+div.plant.hp4{
+	background:green;
+}
+div.plant.hp3{
+	background:orange;
+}
+div.plant.hp2{
+	background:yellow;
+}
+div.plant.hp1{
+	background:red;
+}
+div.plant.die{
+	background:grey;
+}
 
 .test{
 	position:absolute;
 	left:50%;
 	top:50%;
+	margin-left: 300px + (this.x/2);
+	margin-top: 200px + (this.y/2);
 }
+
+0 1 2 3 4 5 6 = 300px, 200px

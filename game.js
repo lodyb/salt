@@ -43,7 +43,6 @@ var Player = {
 		this.parent = parent;
 		this.element = document.createElement('div');
 		this.element.setAttribute('class', 'player');
-		this
 		this.parent.element.appendChild(this.element);
 		console.log('added Player');
 	},
@@ -105,7 +104,7 @@ var Enemy = {
 	create: function(parent) {
 		this.parent = parent;
 		this.element = document.createElement('div');
-		this.element.setAttribute('class', 'Enemy_Default');
+		this.element.setAttribute('class', 'enemy');
 		this.parent.element.appendChild(this.element);
 		console.log('added Enemy');
 	}
