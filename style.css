@@ -78,6 +78,7 @@ div.plant.hp1{
 }
 div.plant.die{
 	background:url('plant_dead.png');
+	margin-top:11px;
 }
 div.enemy{
 	background:url('snail.png');
