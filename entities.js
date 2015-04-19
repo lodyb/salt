@@ -50,6 +50,12 @@ var Player = {
 		console.log('water changed to ', this.water);
 	},
 
+	remove_water: function(n) {
+		this.water -= n;
+		if (this.water < 0) this.water = 0;
+		console.log('water changed to ', this.water);
+	},
+
 	remove_seeds: function(n) {
 		this.seeds = this.seeds -n;
 		if (this.seeds < 0) this.seeds = 0;
@@ -115,7 +121,7 @@ var Plant = {
 
 	element: null,
 	parent: null,
-	health: 5,
+	health: 1,
 	x: 0,
 	y: 0,
 
@@ -149,6 +155,14 @@ var Plant = {
 
 	get_state: function() {
 		return this.element.getAttribute('class');
+	},
+
+	heal: function(n) {
+		if (this.health == 0) return;
+		this.health += n;
+		if (this.health > 5) this.health = 5;
+		this.element.setAttribute('class', 'plant hp' + this.health.toString());
+		console.log('health changed to', this.health, this.element.getAttribute('class'));
 	},
 
 	hurt: function(dmg) {
