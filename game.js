@@ -21,6 +21,7 @@ var Game = {
 	enemy_list: [],
 	/* grid_x/grid_y is the location relative to the plant list */
 	salt_dock: {x: 20, y: 200, grid_x: -1, grid_y: -1},
+	water_dock: {x: 780, y: 227, grid_x: 4, grid_y: 4},
 	keys: {
 		up: false, down: false, left: false, right: false,
 		space: false, q: false,
@@ -51,6 +52,27 @@ var Game = {
 		}
 	},
 
+	use_seed: function() {
+		console.log('use seed');
+		if (this.player.x == -1 || this.player.x == this.water_dock.grid_x)
+			return;
+		if (this.player.seeds > 0) {
+			var p = this.plant_list[this.player.y][this.player.x];
+			if (p.get_state() == 'plant die') {
+				p.spawn();
+				this.player.remove_seeds(1);
+			}
+		}
+	},
+
+	use_water: function() {
+		console.log('use water');
+	},
+
+	use_salt: function() {
+		console.log('use salt');
+	},
+
 	/**
 	 * input
 	 */
@@ -78,7 +100,8 @@ var Game = {
 				this.player.set_pos(pos.x, pos.y);
 			}
 			else {
-				if (this.plant_list[pos.y +1][pos.x] <= this.plant_list[pos.y][pos.x].x) {
+				if (this.plant_list[pos.y +1][pos.x] <=
+					this.plant_list[pos.y][pos.x].x) {
 					this.player.set_pos(pos.x, pos.y);
 					return;
 				}
@@ -117,7 +140,8 @@ var Game = {
 				this.player.set_pos(pos.x, pos.y);
 			}
 			else {
-				if (this.plant_list[pos.y -1][pos.x].x <= this.plant_list[pos.y][pos.x].x) {
+				if (this.plant_list[pos.y -1][pos.x].x <=
+					this.plant_list[pos.y][pos.x].x) {
 					this.player.set_pos(pos.x, pos.y);
 					return;
 				}
@@ -156,10 +180,23 @@ var Game = {
 
 	do_space: function() {
 		console.log('do_space');
+		switch (this.player.item) {
+			case 'seed':
+				this.use_seed();
+				break;
+			case 'watering_can':
+				this.use_water();
+				break;
+			case 'salt':
+				this.use_salt();
+				break;
+		}
 	},
 
 	do_q: function() {
 		console.log('do_q');
+		this.player.switch_item();
+		console.log('current_item: ', this.player.item);
 	},
 
 	on_keydown: function(e) {
@@ -236,141 +273,6 @@ var Game = {
 			this.keys.q = false;
 		}
 	}
-
-};
-
-/**
- * player object
- */
-var Player = {
-
-	element: null,
-	parent: null,
-	x: -1,
-	y: -1,
-
-	create: function(parent) {
-		this.parent = parent;
-		this.element = document.createElement('div');
-		this.element.setAttribute('class', 'player');
-		this.parent.element.appendChild(this.element);
-		this.element.style.position = 'absolute';
-		this.set_pos(-1, -1);
-		console.log('added Player');
-	},
-
-	set_pos: function(x, y) {
-		if (x == -1) {
-			this.x = x; this.y = y;
-			this.element.style.left = this.parent.salt_dock.x.toString() + 'px';
-			this.element.style.top = this.parent.salt_dock.y.toString() + 'px';
-		}
-		else {
-			this.x = x; this.y = y;
-			this.element.style.left = (this.parent.plant_list[this.y][this.x].x -35).toString() + 'px';
-			this.element.style.top = (this.parent.plant_list[this.y][this.x].y -45).toString() + 'px';
-		}
-	},
-
-	get_pos: function() {
-		return {x: this.x, y: this.y};
-	},
-
-	happy: function() {
-		this.element.setAttribute('class', 'player happy');
-	},
-
-	die: function() {
-		this.element.setAttribute('class', 'player die');
-	},
-
-	full_salt: function() {
-		this.element.setAttribute('class', 'player full_salt');
-	},
-
-	plant: function() {
-		this.element.setAttribute('class', 'player plant');
-	},
-
-	worry: function() {
-		this.element.setAttribute('class', 'player worry');
-	}
-
-};
-
-/**
- * friendly plant object
- */
-var Plant = {
-
-	element: null,
-	parent: null,
-	health: 5,
-	x: 0,
-	y: 0,
-
-	create: function(parent) {
-		this.parent = parent;
-		this.element = document.createElement('div');
-		this.element.setAttribute('class', 'plant die');
-		this.parent.element.appendChild(this.element);
-		this.element.style.position = 'absolute';
-		this.set_pos(0, 0);
-		console.log('added Plant');
-	},
-
-	set_pos: function(x, y) {
-		this.x = x; this.y = y;
-		this.element.style.left = x.toString() + 'px';
-		this.element.style.top = y.toString() + 'px';
-	},
-
-	get_pos: function() {
-		return {x: this.x, y: this.y};
-	},
-
-
-	hurt: function(dmg) {
-		this.health -= dmg;
-		if (this.health < 1) this.die();
-		else this.element.setAttribute('class', 'plant hp' + this.health.toString());
-	},
-
-	die: function() {
-		this.element.setAttribute('class', 'plant die');
-	}
-
-};
-
-/**
- * enemy snail object
- */
-var Enemy = {
-
-	element: null,
-	parent: null,
-	x: 0,
-	y: 0,
-
-	create: function(parent) {
-		this.parent = parent;
-		this.element = document.createElement('div');
-		this.element.setAttribute('class', 'enemy');
-		this.parent.element.appendChild(this.element);
-		this.element.style.position = 'absolute';
-		this.set_pos(0, 0);
-		console.log('added Enemy');
-	},
-
-	set_pos: function(x, y) {
-		this.x = x; this.y = y;
-		this.element.style.left = x.toString() + 'px';
-		this.element.style.top = y.toString() + 'px';
-	},
-
-	get_pos: function() {
-		return {x: this.x, y: this.y};
-	},
 
 };
 
