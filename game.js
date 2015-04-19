@@ -27,6 +27,14 @@ var Game = {
 		space: false, q: false,
 	},
 
+	/**
+	 * setInterval items
+	 */
+	water_interval: null,
+	water_use_interval: null,
+	salt_interval: null,
+	salt_use_interval: null,
+
 	create: function() {
 		console.log('init game');
 		this.element = document.getElementsByTagName('main')[0];
@@ -63,6 +71,44 @@ var Game = {
 				this.player.remove_seeds(1);
 			}
 		}
+	},
+
+	use_salt_dock: function() {
+		if (this.player.salt >= 100) return;
+		console.log('refil salt');
+		var that = this;
+		clearInterval(this.salt_interval);
+		this.salt_interval = setInterval(function() {
+			if (that.player.x == that.salt_dock.grid_x &&
+				that.player.y == that.salt_dock.grid_y) {
+				if (that.player.item == 'salt' &&
+					that.player.salt < 100) {
+					that.player.add_salt(1);
+				}
+			}
+			else {
+				clearInterval(that.salt_interval);
+			}
+		}, 25);
+	},
+
+	use_water_dock: function() {
+		if (this.player.water >= 100) return;
+		console.log('refill water');
+		var that = this;
+		clearInterval(this.water_interval);
+		this.water_interval = setInterval(function() {
+			if (that.player.x == that.water_dock.grid_x &&
+				that.player.y == that.water_dock.grid_y) {
+				if (that.player.item == 'watering_can' && 
+					that.player.water < 100) {
+					that.player.add_water(1);
+				}
+			}
+			else {
+				clearInterval(that.water_interval);
+			}
+		}, 25);
 	},
 
 	use_water: function() {
@@ -169,6 +215,7 @@ var Game = {
 		}
 		if (pos.x == 0 && pos.y == 0) {
 			this.player.set_pos(-1, -1);
+			this.use_salt_dock();
 		}
 		else if (pos.x > 0) {
 			this.player.set_pos(pos.x - 1, pos.y);
@@ -187,6 +234,7 @@ var Game = {
 		}
 		else if (pos.x != this.water_dock.grid_x && pos.y == 0) {
 			this.player.set_pos(this.water_dock.grid_x, this.water_dock.grid_y);
+			this.use_water_dock();
 		}
 	},
 
@@ -220,7 +268,6 @@ var Game = {
 				// move up
 				this.move_up();
 			}
-			else this.keys.up = false;
 		}
 		else if (c == KeyCodes.a || c == KeyCodes.left) {
 			if (!this.keys.left) {
@@ -228,7 +275,6 @@ var Game = {
 				// move left
 				this.move_left();
 			}
-			else this.keys.left = false;
 		}
 		else if (c == KeyCodes.s || c == KeyCodes.down) {
 			if (!this.keys.down) {
@@ -236,7 +282,6 @@ var Game = {
 				// move down
 				this.move_down();
 			}
-			else this.keys.down = false;
 		}
 		else if (c == KeyCodes.d || c == KeyCodes.right) {
 			if (!this.keys.right) {
@@ -244,7 +289,6 @@ var Game = {
 				// move right
 				this.move_right();
 			}
-			else this.keys.right = false;
 		}
 		else if (c == KeyCodes.space) {
 			if (!this.keys.space) {
@@ -252,7 +296,6 @@ var Game = {
 				// space
 				this.do_space();
 			}
-			else this.keys.space = false;
 		}
 		else if (c == KeyCodes.q) {
 			if (!this.keys.q) {
@@ -260,7 +303,6 @@ var Game = {
 				// q
 				this.do_q();
 			}
-			else this.keys.q = false;
 		}
 	},
 

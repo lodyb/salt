@@ -9,6 +9,7 @@ var Player = {
 	x: -1,
 	y: -1,
 	item: 'seed',
+	salt: 100,
 	water: 0,
 	seeds: 2,
 
@@ -35,6 +36,18 @@ var Player = {
 				break;
 		}
 		/* draw item */
+	},
+
+	add_salt: function(n) {
+		this.salt += n;
+		if (this.salt > 100) this.salt = 100;
+		console.log('salt changes to ', this.salt);
+	},
+
+	add_water: function(n) {
+		this.water += n;
+		if (this.water > 100) this.water = 100;
+		console.log('water changed to ', this.water);
 	},
 
 	remove_seeds: function(n) {
