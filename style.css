@@ -154,3 +154,76 @@ div.item.active{
 	transform:rotate(110deg);
 
 }
+
+div.ui{
+	line-height:1;
+	font-family:monospace, arial;
+	color:#2c2c2c;
+	position:absolute;
+	top:30px;
+	left:0;
+	font-size:14px;
+	text-indent:50px;
+	height:36px;r
+}
+div.ui:after{
+	content:"";
+	width:100px;
+	height:10px;
+	background:rgba(0,0,0,0.3);
+	margin-top:0px;
+	margin-left:50px;
+	display:block;
+	position:absolute;
+	outline:2px solid #2c2c2c;
+	z-index:5;
+}
+div.ui>div{
+	width:100px;
+	height:10px;
+	background:#000;
+	margin-top:0px;
+	margin-left:50px;
+	display:block;
+	position:absolute;
+	z-index:100;
+	transition:width 1s ease;
+}
+div.ui.water{
+	background:url('watercan.png');
+	background-repeat:no-repeat;
+	line-height:1.5;
+	left:700px;
+}
+div.ui.water>div{
+	background:#3344ff;
+	width:80px;
+}
+div.ui.salt{
+	background:url('salt.png');
+	background-repeat:no-repeat;
+	background-position:20px 7px;
+	line-height:1.5;
+	left:20px;
+}
+div.ui.salt>div{
+	background:#dddddd;
+	width:80px;
+}
+div.ui.seeds{
+	background:url('seed.png');
+	background-repeat:no-repeat;
+	background-position:14px 0px;
+	line-height:1.6;
+	left:380px;
+}
+div.ui.seeds>span{
+	padding-left:5px;
+	font-size:20px;
+	line-height:30px;
+	width:80px;
+	padding-top:4px;
+}
+div.ui.seeds:after{
+	display:none;
+}
