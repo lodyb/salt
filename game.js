@@ -90,14 +90,7 @@ var Game = {
 			if (pos.x > this.plant_list[pos.y].length -1) {
 				this.player.set_pos(pos.x - 1, pos.y);
 			}
-			else if (pos.x == 0) {
-				this.player.set_pos(pos.x, pos.y);
-			}
-			else if (this.plant_list[pos.y + 1][pos.x].x <= this.plant_list[pos.y][pos.x].x) {
-				this.player.set_pos(pos.x, pos.y);
-				return;
-			}
-			else this.player.set_pos(pos.x + 1, pos.y);
+			else { this.player.set_pos(pos.x, pos.y); }
 		}
 	},
 
@@ -136,14 +129,7 @@ var Game = {
 			if (pos.x > this.plant_list[pos.y].length -1) {
 				this.player.set_pos(pos.x - 1, pos.y);
 			}
-			else if (pos.x == 0) {
-				this.player.set_pos(pos.x, pos.y);
-			}
-			else if (this.plant_list[pos.y -1][pos.x].x <= this.plant_list[pos.y][pos.x].x) {
-				this.player.set_pos(pos.x, pos.y);
-				return;
-			}
-			else this.player.set_pos(pos.x + 1, pos.y);
+			else this.player.set_pos(pos.x, pos.y);
 		}
 	},
 
