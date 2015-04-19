@@ -62,7 +62,9 @@ var Game = {
 
 	use_seed: function() {
 		console.log('use seed');
-		if (this.player.x == -1 || this.player.x == this.water_dock.grid_x)
+		if (this.player.x == -1 ||
+			(this.player.x == this.water_dock.grid_x &&
+			this.player.y == this.water_dock.grid_y))
 			return;
 		if (this.player.seeds > 0) {
 			var p = this.plant_list[this.player.y][this.player.x];
@@ -113,6 +115,35 @@ var Game = {
 
 	use_water: function() {
 		console.log('use water');
+		if (this.player.x == -1 ||
+			(this.player.x == this.water_dock.grid_x &&
+			this.player.y == this.water_dock.grid_x))
+			return;
+		if (this.player.water == 25) return;
+		var p = this.plant_list[this.player.y][this.player.x];
+		var state = p.get_state();
+		if (state != 'plant die' &&
+			state != 'plant spawn' &&
+			state != 'plant hp5') {
+			var x = this.player.x;
+			var y = this.player.y;
+			var that = this;
+			clearInterval(this.water_use_interval);
+			this.water_use_interval = setInterval(function() {
+				if (that.player.x == x &&
+					that.player.y == y &&
+					that.keys.space) {
+					if (that.player.water >= 25) {
+						that.plant_list[y][x].heal(1);
+						that.player.remove_water(25);
+					}
+				}
+				else {
+					console.log('clr');
+					clearInterval(that.water_use_interval);
+				}
+			}, 1000);
+		}
 	},
 
 	use_salt: function() {
