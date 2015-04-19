@@ -35,7 +35,7 @@ var Game = {
 		this.add_plants([
 			[{x: 150, y: 245}, {x: 400, y: 228}, {x: 650, y: 233}],
 			[{x: 106, y: 378}, {x: 329, y: 356}, {x: 550, y: 363}, {x: 758, y: 390}],
-			[{x: 152, y: 486}, {x: 375, y: 476}, {x: 589, y: 491}, {x: 790, y: 532}],,
+			[{x: 152, y: 486}, {x: 375, y: 476}, {x: 589, y: 491}, {x: 790, y: 532}],
 		]);
 	},
 
@@ -242,8 +242,8 @@ var Player = {
 		}
 		else {
 			this.x = x; this.y = y;
-			this.element.style.left = this.parent.plant_list[this.y][this.x].x.toString() + 'px';
-			this.element.style.top = this.parent.plant_list[this.y][this.x].y.toString() + 'px';
+			this.element.style.left = (this.parent.plant_list[this.y][this.x].x -35).toString() + 'px';
+			this.element.style.top = (this.parent.plant_list[this.y][this.x].y -45).toString() + 'px';
 		}
 	},
 
