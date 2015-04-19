@@ -57,54 +57,93 @@ var Game = {
 
 	move_up: function() {
 		console.log('move_up');
-	},
-
-	move_down: function() {
-		console.log('move_down');
 		var pos = this.player.get_pos();
-		if (pos.x == -1) return;
-		if (pos.y < this.plant_list.length - 1) {
-			pos.y += 1;
-			if (this.keys.left) {
-				/* shortest path down left */
-				if (pos.x == -1) return;
-				if (pos.x == 0) {
-					this.player.set_pos(pos.x, pos.y);
-					return;
-				}
-				pos.x -= 1;
+		if (pos.x == -1 || pos.y == 0) return;
+		pos.y -= 1;
+		if (this.keys.left) {
+			/* shortest path up left */
+			if (pos.x == 0) {
+				this.player.set_pos(pos.x, pos.y);
+				return;
+			}
+			pos.x -= 1;
+			this.player.set_pos(pos.x, pos.y);
+		}
+		else if (this.keys.right) {
+			/* shortest path up right */
+			if (pos.x > this.plant_list[pos.y].length -1) {
+				this.player.set_pos(pos.x -1, pos.y);
+			}
+			else if (pos.x == this.plant_list[pos.y].length - 1) {
 				this.player.set_pos(pos.x, pos.y);
 			}
-			else if (this.keys.right) {
-				/* shortest path down right */
-				if (pos.x > this.plant_list[pos.y].length -1) {
-					this.player.set_pos(pos.x -1, pos.y);
-				}
-				else if (pos.x == this.plant_list[pos.y].length -1) {
-					this.player.set_pos(pos.x, pos.y);
-				}
-				else {
-					if (this.plant_list[pos.y -1][pos.x].x <= this.plant_list[pos.y][pos.x].x) {
-						this.player.set_pos(pos.x, pos.y);
-						return;
-					}
-					else this.player.set_pos(pos.x + 1, pos.y);
-				}
-			}
 			else {
-				/* shortest path down */
-				if (pos.x > this.plant_list[pos.y].length -1) {
-					this.player.set_pos(pos.x - 1, pos.y);
-				}
-				else if (pos.x == 0) {
-					this.player.set_pos(pos.x, pos.y);
-				}
-				else if (this.plant_list[pos.y -1][pos.x].x <= this.plant_list[pos.y][pos.x].x) {
+				if (this.plant_list[pos.y +1][pos.x] <= this.plant_list[pos.y][pos.x].x) {
 					this.player.set_pos(pos.x, pos.y);
 					return;
 				}
 				else this.player.set_pos(pos.x + 1, pos.y);
 			}
+		}
+		else {
+			/* shortest path up */
+			if (pos.x > this.plant_list[pos.y].length -1) {
+				this.player.set_pos(pos.x - 1, pos.y);
+			}
+			else if (pos.x == 0) {
+				this.player.set_pos(pos.x, pos.y);
+			}
+			else if (this.plant_list[pos.y + 1][pos.x].x <= this.plant_list[pos.y][pos.x].x) {
+				this.player.set_pos(pos.x, pos.y);
+				return;
+			}
+			else this.player.set_pos(pos.x + 1, pos.y);
+		}
+	},
+
+	move_down: function() {
+		console.log('move_down');
+		var pos = this.player.get_pos();
+		if (pos.x == -1 || pos.y >= this.plant_list.length - 1) return;
+		pos.y += 1;
+		if (this.keys.left) {
+			/* shortest path down left */
+			if (pos.x == 0) {
+				this.player.set_pos(pos.x, pos.y);
+				return;
+			}
+			pos.x -= 1;
+			this.player.set_pos(pos.x, pos.y);
+		}
+		else if (this.keys.right) {
+			/* shortest path down right */
+			if (pos.x > this.plant_list[pos.y].length -1) {
+				this.player.set_pos(pos.x -1, pos.y);
+			}
+			else if (pos.x == this.plant_list[pos.y].length -1) {
+				this.player.set_pos(pos.x, pos.y);
+			}
+			else {
+				if (this.plant_list[pos.y -1][pos.x].x <= this.plant_list[pos.y][pos.x].x) {
+					this.player.set_pos(pos.x, pos.y);
+					return;
+				}
+				else this.player.set_pos(pos.x + 1, pos.y);
+			}
+		}
+		else {
+			/* shortest path down */
+			if (pos.x > this.plant_list[pos.y].length -1) {
+				this.player.set_pos(pos.x - 1, pos.y);
+			}
+			else if (pos.x == 0) {
+				this.player.set_pos(pos.x, pos.y);
+			}
+			else if (this.plant_list[pos.y -1][pos.x].x <= this.plant_list[pos.y][pos.x].x) {
+				this.player.set_pos(pos.x, pos.y);
+				return;
+			}
+			else this.player.set_pos(pos.x + 1, pos.y);
 		}
 	},
 
@@ -287,7 +326,7 @@ var Plant = {
 	create: function(parent) {
 		this.parent = parent;
 		this.element = document.createElement('div');
-		this.element.setAttribute('class', 'plant spawn');
+		this.element.setAttribute('class', 'plant die');
 		this.parent.element.appendChild(this.element);
 		this.element.style.position = 'absolute';
 		this.set_pos(0, 0);
