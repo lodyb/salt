@@ -21,7 +21,7 @@ var Game = {
 	enemy_list: [],
 	/* grid_x/grid_y is the location relative to the plant list */
 	salt_dock: {x: 20, y: 200, grid_x: -1, grid_y: -1},
-	water_dock: {x: 780, y: 227, grid_x: 4, grid_y: 4},
+	water_dock: {x: 790, y: 220, grid_x: 3, grid_y: 0},
 	keys: {
 		up: false, down: false, left: false, right: false,
 		space: false, q: false,
@@ -80,7 +80,9 @@ var Game = {
 	move_up: function() {
 		console.log('move_up');
 		var pos = this.player.get_pos();
-		if (pos.x == -1 || pos.y == 0) return;
+		if (pos.x == -1 || pos.y == 0 ||
+			(pos.x == this.water_dock.grid_x && pos.y == 0))
+			 return;
 		pos.y -= 1;
 		if (this.keys.left) {
 			/* shortest path up left */
@@ -120,7 +122,10 @@ var Game = {
 	move_down: function() {
 		console.log('move_down');
 		var pos = this.player.get_pos();
-		if (pos.x == -1 || pos.y >= this.plant_list.length - 1) return;
+		if (pos.x == -1 ||
+			(pos.x == this.water_dock.grid_x && pos.y == 0) ||
+			pos.y >= this.plant_list.length - 1)
+			return;
 		pos.y += 1;
 		if (this.keys.left) {
 			/* shortest path down left */
@@ -159,6 +164,9 @@ var Game = {
 
 	move_left: function() {
 		var pos = this.player.get_pos();
+		if (pos.x == this.water_dock.grid_x) {
+			this.player.set_pos(pos.x - 1, pos.y);
+		}
 		if (pos.x == 0 && pos.y == 0) {
 			this.player.set_pos(-1, -1);
 		}
@@ -170,11 +178,15 @@ var Game = {
 	move_right: function() {
 		console.log('move_right');
 		var pos = this.player.get_pos();
+		if (pos.x == this.water_dock.grid_x) return;
 		if (pos.x == -1) {
 			this.player.set_pos(0, 0);
 		}
 		else if (pos.x < this.plant_list[pos.y].length - 1) {
 			this.player.set_pos(pos.x + 1, pos.y);
+		}
+		else if (pos.x != this.water_dock.grid_x && pos.y == 0) {
+			this.player.set_pos(this.water_dock.grid_x, this.water_dock.grid_y);
 		}
 	},
 

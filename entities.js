@@ -46,13 +46,26 @@ var Player = {
 	set_pos: function(x, y) {
 		if (x == -1) {
 			this.x = x; this.y = y;
-			this.element.style.left = this.parent.salt_dock.x.toString() + 'px';
-			this.element.style.top = this.parent.salt_dock.y.toString() + 'px';
+			this.element.style.left =
+				this.parent.salt_dock.x.toString() + 'px';
+			this.element.style.top =
+				this.parent.salt_dock.y.toString() + 'px';
+		}
+		else if (x == this.parent.water_dock.grid_x && y == 0) {
+			this.x = x; this.y = y;
+			this.element.style.left =
+				this.parent.water_dock.x.toString() + 'px';
+			this.element.style.top =
+				this.parent.water_dock.y.toString() + 'px';
 		}
 		else {
 			this.x = x; this.y = y;
-			this.element.style.left = (this.parent.plant_list[this.y][this.x].x -35).toString() + 'px';
-			this.element.style.top = (this.parent.plant_list[this.y][this.x].y -45).toString() + 'px';
+			this.element.style.left =
+				(this.parent.plant_list[
+				this.y][this.x].x -35).toString() + 'px';
+			this.element.style.top =
+				(this.parent.plant_list[
+				this.y][this.x].y -45).toString() + 'px';
 		}
 	},
 
