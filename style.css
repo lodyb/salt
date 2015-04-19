@@ -77,10 +77,19 @@ div.plant.hp1{
 	background:url('hp1.png');
 }
 div.plant.die{
-	background:blue;
+	background:url('plant_dead.png');
 }
 div.enemy{
 	background:url('snail.png');
 	width:96px;
 	height:128px;
+}
+
+div.ui_salt{
+	width:150px;
+	height:20px;
+	background:rgba(100,130,220,0.8);
+	position:absolute;
+	top:30px;
+	left:80px;
 }
