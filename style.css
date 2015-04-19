@@ -56,10 +56,12 @@ div.plant{
 	background:transparent;
 	width:64px;
 	height:64px;
-	transition:background 0.2s linear;
+	transition:all 0.2s linear;
 }
 div.plant.spawn{
-	background:url('hp5.png');
+	opacity:0;
+	background:url('plant_dead.png');
+	margin-top:11px;
 }
 div.plant.hp5{
 	background:url('hp5.png');
