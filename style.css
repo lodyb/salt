@@ -108,20 +108,30 @@ div.item{
 }
 
 div.item.water{
-	width:38px;
-	height:36px;
+	width:40px;
+	height:40px;
 	margin-left:50px;
 	margin-top:40px;
 	background:url('watercan.png');
+	background-repeat:no-repeat;
 }
 div.item.salt{
-	width:17px;
-	height:25px;
+	width:40px;
+	height:40px;
 	margin-left:50px;
 	margin-top:35px;
 	background:url('salt.png');
+	background-repeat:no-repeat;
 }
-
+div.item.seeds{
+	width:60px;
+	height:60px;
+	margin-left:50px;
+	margin-top:35px;
+	background:url('seed.png');
+	background-repeat:no-repeat;
+	transition:all 0.5s ease-in-out;
+}
 div.item.water>span{
 	font-size:11px;
 	font-family: monospace, arial;
@@ -152,7 +162,11 @@ div.item.water.active>span{
 div.item.active{
 	-webkit-transform:rotate(110deg);
 	transform:rotate(110deg);
-
+}
+div.item.seeds.active{
+	-webkit-transform:rotate(-10deg) translate(0,50px);
+	transform:rotate(-10deg) translate(0,50px);
+	opacity:0;
 }
 
 div.ui{
@@ -221,7 +235,7 @@ div.ui.seeds>span{
 	padding-left:5px;
 	font-size:20px;
 	line-height:30px;
-	width:80px;
+	width:8 0px;
 	padding-top:4px;
 }
 div.ui.seeds:after{
