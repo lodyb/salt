@@ -17,6 +17,7 @@ var Player = {
 	seeds_ui: null,
 	water_ui: null,
 	display_pouring_interval: null,
+	fx_text: 'goodwater',
 
 	create: function(parent) {
 		this.parent = parent;
@@ -76,16 +77,24 @@ var Player = {
 		if (b) {
 			this.display_item('item water active');
 			var that = this;
+			var len = this.fx_text.length;
+			var start = 0;
 			this.display_pouring_interval = setInterval(function() {
 				if (that.item == 'watering_can' && that.water >= 25 &&
 					that.parent.keys.space) {
-					that.element_item_fx.innerHTML = 'meow';
+					var s = '';
+					while (s.length < 6) {
+						if (start == len -1) start = 0;
+						s += that.fx_text[start];
+						start++;
+					}
+					that.element_item_fx.innerHTML = s;
 				}
 				else {
 					that.element_item_fx.innerHTML = '';
 					clearInterval(that.display_pouring_interval);
 				}
-			}, 50);
+			}, 120);
 		}
 		else {
 			this.display_item('item water');
@@ -240,6 +249,7 @@ var Enemy = {
 	parent: null,
 	x: 0,
 	y: 0,
+	nom_interval: null,
 
 	create: function(parent) {
 		this.parent = parent;
@@ -249,13 +259,54 @@ var Enemy = {
 		this.element.style.position = 'absolute';
 		this.set_pos(0, 0);
 		console.log('added Enemy');
+		var that = this;
+		this.nom_interval = setInterval(function() {
+			var p = that.parent.plant_list[that.y][that.x];
+			var state = p.get_state();
+			if (state != 'plant spawn' && state != 'plant die') {
+				p.hurt(1);
+			}
+			else {
+				clearInterval(that.nom_interval);
+				that.move_next();
+			}
+		}, 1000);
+	},
+
+	move_next: function() {
+		this.die();
+		var that = this;
+		setTimeout(function() {
+			that.parent.add_snail();
+		}, 1000);
+	},
+
+	die: function() {
+		var r = null;
+		for (var i = 0; i < this.parent.enemy_list; i++) {
+			var e = this.parent.enemy_list[i];
+			if (e.x == this.x && e.y == this.y) {
+				r = i;
+			}
+		}
+		this.parent.enemy_list.splice(r, 1);
+		this.element.setAttribute('class', 'enemy die');
+		var that = this;
+		setTimeout(function() {
+			that.parent.element.removeChild(that.element);
+		}, 1000);
 	},
 
 	set_pos: function(x, y) {
 		this.x = x; this.y = y;
-		this.element.style.left = x.toString() + 'px';
-		this.element.style.top = y.toString() + 'px';
+		this.element.style.left =
+			(this.parent.plant_list[
+			this.y][this.x].x -35).toString() + 'px';
+		this.element.style.top =
+			(this.parent.plant_list[
+			this.y][this.x].y -45).toString() + 'px';
 	},
+
 
 	get_pos: function() {
 		return {x: this.x, y: this.y};

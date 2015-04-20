@@ -86,6 +86,7 @@ div.enemy{
 	background:url('snail.png');
 	width:96px;
 	height:128px;
+	margin-left:60px;
 }
 
 .test{
@@ -136,7 +137,7 @@ div.item.water>span{
 	transition-delay:0s;
 }
 div.item.water.active>span{
-	color:limegreen;
+	color:#3344ff;
 	text-shadow:1px 1px 0 #000;
 	font-size:11px;
 	font-family: monospace, arial;
@@ -197,7 +198,7 @@ div.ui.water{
 }
 div.ui.water>div{
 	background:#3344ff;
-	width:80px;
+	width:0px;
 }
 div.ui.salt{
 	background:url('salt.png');
@@ -208,7 +209,7 @@ div.ui.salt{
 }
 div.ui.salt>div{
 	background:#dddddd;
-	width:80px;
+	width:100px;
 }
 div.ui.seeds{
 	background:url('seed.png');

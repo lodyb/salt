@@ -17,8 +17,10 @@ var Game = {
 
 	element: null,
 	player: null,
+	difficulty: 1,
 	plant_list: [],
 	enemy_list: [],
+	started: false,
 	/* grid_x/grid_y is the location relative to the plant list */
 	salt_dock: {x: 20, y: 200, grid_x: -1, grid_y: -1},
 	water_dock: {x: 790, y: 220, grid_x: 3, grid_y: 0},
@@ -55,8 +57,39 @@ var Game = {
 				var obj = arr[i][y];
 				var n = this.plant_list[i].push(Object.create(Plant));
 				this.plant_list[i][n - 1].create(this);
-				this.plant_list[i][n - 1].set_pos(obj.x, obj.y)
+				this.plant_list[i][n - 1].set_pos(obj.x, obj.y);
 			}
+		}
+	},
+
+	has_snail: function(x, y) {
+		for (var i = 0; i < this.enemy_list.length; i++) {
+			if (this.enemy_list[i].x == x && this.enemy_list[i].y == y) {
+				return true;
+			}
+		}
+		return false;
+	},
+
+	add_snail: function() {
+		pos_l = [];
+		console.log('game started');
+		for (var y = 0; y < this.plant_list.length; y++) {
+			for (var x = 0; x < this.plant_list[0].length; x++) {
+				var p = this.plant_list[y][x];
+				var state = p.get_state();
+				if (state == 'plant spawn' || state == 'plant die')
+					continue;
+				if (!this.has_snail(x, y)) {
+					pos_l.push({x: x, y: y});
+				}
+			}
+		}
+		if (pos_l.length > 0) {
+			var r = pos_l[Math.floor(Math.random() * pos_l.length)];
+			var snail = Object.create(Enemy);
+			snail.create(this);
+			snail.set_pos(r.x, r.y);
 		}
 	},
 
@@ -70,6 +103,12 @@ var Game = {
 			var p = this.plant_list[this.player.y][this.player.x];
 			if (p.get_state() == 'plant die') {
 				p.spawn();
+				if (!this.started) {
+					this.started = true;
+					var that = this;
+					setTimeout(function() { that.add_snail(); },
+						10000);
+				}
 				this.player.remove_seeds(1);
 			}
 		}
