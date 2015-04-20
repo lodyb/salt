@@ -262,3 +262,11 @@ div.timer{
 	font-size:24px;
 	letter-spacing:3px
 }
+
+body>p{
+	color:#fff;
+	font-size:11px;
+}
+body>p>a{
+	color:#fac;
+}
