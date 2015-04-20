@@ -53,7 +53,7 @@ var Player = {
 				break;
 			case 'salt':
 				this.item = 'seed';
-				this.display_item('item seed');
+				this.display_item('item seeds');
 				break;
 		}
 		/* draw item */
@@ -70,6 +70,18 @@ var Player = {
 		if (this.water > 100) this.water = 100;
 		this.display_water();
 		console.log('water changed to ', this.water);
+	},
+
+	display_seed_drop: function() {
+		if (this.item != 'seed') return;
+		console.log('why no animated?');
+		this.display_item( 'item seeds active');
+		var that = this;
+		setTimeout(function() {
+			if (that.item == 'seed') {
+				that.display_item('item seeds');
+			}
+		}, 600);
 	},
 
 	display_pouring: function (b) {

@@ -103,6 +103,7 @@ var Game = {
 			var p = this.plant_list[this.player.y][this.player.x];
 			if (p.get_state() == 'plant die') {
 				p.spawn();
+				this.player.display_seed_drop();
 				if (!this.started) {
 					this.started = true;
 					var that = this;
