@@ -16,6 +16,7 @@ var Player = {
 	seeds: 2,
 	seeds_ui: null,
 	water_ui: null,
+	salt_ui: null,
 	display_pouring_interval: null,
 	fx_text: 'goodwater',
 
@@ -23,6 +24,7 @@ var Player = {
 		this.parent = parent;
 		this.seeds_ui = document.getElementById('seeds');
 		this.water_ui = document.getElementById('water');
+		this.salt_ui = document.getElementById('salt');
 		this.element = document.createElement('div');
 		this.element.setAttribute('class', 'player');
 		this.parent.element.appendChild(this.element);
@@ -62,6 +64,7 @@ var Player = {
 	add_salt: function(n) {
 		this.salt += n;
 		if (this.salt > 100) this.salt = 100;
+		this.display_salt();
 		console.log('salt changes to ', this.salt);
 	},
 
@@ -83,6 +86,15 @@ var Player = {
 			}
 		}, 600);
 	},
+
+	display_salt_pouring: function(b) {
+		if (b) {
+			this.display_item('item salt active');
+		}
+		else {
+			this.display_item('item salt');
+		}
+	},	
 
 	display_pouring: function (b) {
 		if (this.item != 'watering_can') return;
@@ -115,11 +127,22 @@ var Player = {
 		}
 	},
 
+	remove_salt: function(n) {
+		this.salt -= n;
+		if (this.salt < 0) this.salt = 0;
+		this.display_salt();
+		console.log('salt changed to ', this.salt);
+	},
+
 	remove_water: function(n) {
 		this.water -= n;
 		if (this.water < 0) this.water = 0;
 		this.display_water();
 		console.log('water changed to ', this.water);
+	},
+
+	display_salt: function() {
+		this.salt_ui.style.width = this.salt.toString() + 'px';
 	},
 
 	display_water: function() {

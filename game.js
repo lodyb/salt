@@ -71,6 +71,15 @@ var Game = {
 		return false;
 	},
 
+	get_snail: function(x, y) {
+		for (var i = 0; i < this.enemy_list.length; i++) {
+			if (this.enemy_list[i].x == x && this.enemy_list[i].y == y) {
+				return this.enemy_list[i];
+			}
+		}
+		return null;
+	},
+
 	add_snail: function() {
 		pos_l = [];
 		console.log('game started');
@@ -90,9 +99,6 @@ var Game = {
 			var snail = Object.create(Enemy);
 			snail.create(this);
 			snail.set_pos(r.x, r.y);
-		} else {
-			clearInterval(this.score);
-			console.log('game over final score: '+document.getElementById('timer').innerHTML)
 		}
 	},
 
@@ -112,11 +118,6 @@ var Game = {
 					var that = this;
 					setTimeout(function() { that.add_snail(); },
 						10000);
-					var time_elapsed = 1;
-					this.score = setInterval(function() {
-						time_elapsed++;
-						document.getElementById('timer').innerHTML = time_elapsed;
-					},100);
 				}
 				this.player.remove_seeds(1);
 			}
@@ -150,7 +151,7 @@ var Game = {
 		this.water_interval = setInterval(function() {
 			if (that.player.x == that.water_dock.grid_x &&
 				that.player.y == that.water_dock.grid_y) {
-				if (that.player.item == 'watering_can' &&
+				if (that.player.item == 'watering_can' && 
 					that.player.water < 100) {
 					that.player.add_water(1);
 				}
@@ -199,6 +200,27 @@ var Game = {
 
 	use_salt: function() {
 		console.log('use salt');
+		var that = this;
+		this.player.display_salt_pouring(true);
+		clearInterval(this.salt_user_interval);
+		this.salt_use_interval = setInterval(function() {
+			if (that.keys.space && that.player.item == 'salt') {
+				if (that.player.salt >= 25 &&
+					that.player.x != -1 &&
+					(that.player.x != that.water_dock.grid_x ||
+					that.player.y != that.water_dock.grid_y)) {
+					if (that.has_snail(that.player.x,
+						that.player.y)) {
+						that.get_snail.die();
+					}
+				}
+				that.player.remove_salt(25);
+			}
+			else {
+				that.player.display_salt_pouring(false);
+				clearInterval(that.water_use_interval);
+			}
+		}, 1000);
 	},
 
 	/**
