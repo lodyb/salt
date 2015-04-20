@@ -86,6 +86,7 @@ div.enemy{
 	background:url('snail.png');
 	width:96px;
 	height:128px;
+	transition:all 0.5s ease-in-out;
 }
 
 .test{
@@ -240,4 +241,10 @@ div.ui.seeds>span{
 }
 div.ui.seeds:after{
 	display:none;
+}
+
+div.enemy.die{
+	opacity:0;
+	-webkit-transform:scale(0.1, 0.1);
+	transform:scale(0.1, 0.1);
 }
