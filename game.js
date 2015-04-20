@@ -90,6 +90,9 @@ var Game = {
 			var snail = Object.create(Enemy);
 			snail.create(this);
 			snail.set_pos(r.x, r.y);
+		} else {
+			clearInterval(this.score);
+			console.log('game over final score: '+document.getElementById('timer').innerHTML)
 		}
 	},
 
@@ -109,6 +112,11 @@ var Game = {
 					var that = this;
 					setTimeout(function() { that.add_snail(); },
 						10000);
+					var time_elapsed = 1;
+					this.score = setInterval(function() {
+						time_elapsed++;
+						document.getElementById('timer').innerHTML = time_elapsed;
+					},100);
 				}
 				this.player.remove_seeds(1);
 			}
@@ -142,7 +150,7 @@ var Game = {
 		this.water_interval = setInterval(function() {
 			if (that.player.x == that.water_dock.grid_x &&
 				that.player.y == that.water_dock.grid_y) {
-				if (that.player.item == 'watering_can' && 
+				if (that.player.item == 'watering_can' &&
 					that.player.water < 100) {
 					that.player.add_water(1);
 				}
