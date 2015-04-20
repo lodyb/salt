@@ -20,6 +20,7 @@ var Game = {
 	difficulty: 1,
 	plant_list: [],
 	enemy_list: [],
+	timer: null,
 	started: false,
 	/* grid_x/grid_y is the location relative to the plant list */
 	salt_dock: {x: 20, y: 200, grid_x: -1, grid_y: -1},
@@ -36,10 +37,13 @@ var Game = {
 	water_use_interval: null,
 	salt_interval: null,
 	salt_use_interval: null,
+	snail_interval: null,
+	timer_interval: null,
 
 	create: function() {
 		console.log('init game');
 		this.element = document.getElementsByTagName('main')[0];
+		this.timer = document.getElementById('timer');
 		this.player = Object.create(Player); this.player.create(this);
 		this.player.set_pos(this.salt_dock.grid_x, this.salt_dock.grid_y);
 
@@ -99,7 +103,26 @@ var Game = {
 			var snail = Object.create(Enemy);
 			snail.create(this);
 			snail.set_pos(r.x, r.y);
+			this.enemy_list.push(snail);
 		}
+		else {
+			// end
+			clearInterval(this.timer_interval);
+			clearInterval(this.snail_interval);
+			this.timer.innerHTML = 'finished with score: ' +
+				this.tick.toString();
+			this.ended = true;
+		}
+	},
+
+	init_snails: function() {
+		this.add_snail();
+		var that = this;
+		this.snail_interval = setInterval(function() {
+			that.add_snail();
+			that.player.seeds++;
+			that.player.display_seeds();
+		}, 8000);
 	},
 
 	use_seed: function() {
@@ -115,8 +138,13 @@ var Game = {
 				this.player.display_seed_drop();
 				if (!this.started) {
 					this.started = true;
+					console.log('started');
 					var that = this;
-					setTimeout(function() { that.add_snail(); },
+					that.tick = 0;
+					this.timer_interval = setInterval(function() {
+						that.timer.innerHTML = (that.tick++).toString();
+					}, 500);
+					setTimeout(function() { that.init_snails(); },
 						10000);
 				}
 				this.player.remove_seeds(1);
@@ -209,16 +237,19 @@ var Game = {
 					that.player.x != -1 &&
 					(that.player.x != that.water_dock.grid_x ||
 					that.player.y != that.water_dock.grid_y)) {
+					console.log('.new');
 					if (that.has_snail(that.player.x,
 						that.player.y)) {
-						that.get_snail.die();
+						console.log('mew');
+						that.get_snail(that.player.x,
+							that.player.y).die();
 					}
 				}
 				that.player.remove_salt(25);
 			}
 			else {
 				that.player.display_salt_pouring(false);
-				clearInterval(that.water_use_interval);
+				clearInterval(that.salt_use_interval);
 			}
 		}, 1000);
 	},
@@ -365,6 +396,10 @@ var Game = {
 
 	on_keydown: function(e) {
 		if (e.repeat) return;
+		if (this.ended) {
+			/* reset game */
+			console.log('reset');
+		}
 		var c = (e.keyCode ? e.keyCode : e.which);
 		if (c == KeyCodes.w || c == KeyCodes.up) {
 			if (!this.keys.up) {

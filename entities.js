@@ -317,6 +317,7 @@ var Enemy = {
 	},
 
 	die: function() {
+		clearInterval(this.nom_interval);
 		var r = null;
 		for (var i = 0; i < this.parent.enemy_list; i++) {
 			var e = this.parent.enemy_list[i];
@@ -328,7 +329,9 @@ var Enemy = {
 		this.element.setAttribute('class', 'enemy die');
 		var that = this;
 		setTimeout(function() {
-			that.parent.element.removeChild(that.element);
+			/* please forgive me */
+			that.element.setAttribute('class', '');
+			that.element.style.display = 'none';
 		}, 1000);
 	},
 
