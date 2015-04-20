@@ -6,6 +6,7 @@ var Player = {
 
 	element: null,
 	element_item: null,
+	element_item_fx: null,
 	parent: null,
 	x: -1,
 	y: -1,
@@ -15,6 +16,7 @@ var Player = {
 	seeds: 2,
 	seeds_ui: null,
 	water_ui: null,
+	display_pouring_interval: null,
 
 	create: function(parent) {
 		this.parent = parent;
@@ -27,6 +29,8 @@ var Player = {
 		this.element_item = document.createElement('div');
 		this.element_item.setAttribute('class', 'item seeds');
 		this.element.appendChild(this.element_item);
+		this.element_item_fx = document.createElement('span');
+		this.element_item.appendChild(this.element_item_fx);
 		this.set_pos(-1, -1);
 		console.log('added Player');
 	},
@@ -69,8 +73,25 @@ var Player = {
 
 	display_pouring: function (b) {
 		if (this.item != 'watering_can') return;
-		if (b) this.display_item('item water active');
-		else this.display_item('item water');
+		if (b) {
+			this.display_item('item water active');
+			var that = this;
+			this.display_pouring_interval = setInterval(function() {
+				if (that.item == 'watering_can' && that.water >= 25 &&
+					that.parent.keys.space) {
+					that.element_item_fx.innerHTML = 'meow';
+				}
+				else {
+					that.element_item_fx.innerHTML = '';
+					clearInterval(that.display_pouring_interval);
+				}
+			}, 50);
+		}
+		else {
+			this.display_item('item water');
+			this.element_item_fx.innerHTML = '';
+			clearInterval(this.display_pouring_interval);
+		}
 	},
 
 	remove_water: function(n) {

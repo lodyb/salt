@@ -126,7 +126,7 @@ var Game = {
 		this.player.display_pouring(true);
 		clearInterval(this.water_use_interval);
 		this.water_use_interval = setInterval(function() {
-			if (that.keys.space) {
+			if (that.keys.space && that.player.item == 'watering_can') {
 				if (that.player.water >= 25 && that.player.x !== -1 &&
 					(that.player.x != that.water_dock.grid_x ||
 					that.player.y != that.water_dock.grid_y)) {
