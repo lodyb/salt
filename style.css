@@ -131,8 +131,10 @@ div.item.seeds{
 	margin-left:50px;
 	margin-top:35px;
 	background:url('seed.png');
+	opacity:1;
 	background-repeat:no-repeat;
-	transition:all 0.5s ease-in-out;
+	transition:all 0.0s ease-in-out;
+	transition:opacity 0.5s ease-in-out;
 }
 div.item.water>span{
 	font-size:11px;
@@ -169,6 +171,7 @@ div.item.seeds.active{
 	-webkit-transform:rotate(-10deg) translate(0,50px);
 	transform:rotate(-10deg) translate(0,50px);
 	opacity:0;
+	transition:all 0.5s ease-in-out;
 }
 
 div.ui{
