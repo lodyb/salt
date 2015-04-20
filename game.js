@@ -115,35 +115,38 @@ var Game = {
 
 	use_water: function() {
 		console.log('use water');
-		if (this.player.x == -1 ||
-			(this.player.x == this.water_dock.grid_x &&
-			this.player.y == this.water_dock.grid_x))
-			return;
-		if (this.player.water == 25) return;
-		var p = this.plant_list[this.player.y][this.player.x];
-		var state = p.get_state();
-		if (state != 'plant die' &&
-			state != 'plant spawn' &&
-			state != 'plant hp5') {
-			var x = this.player.x;
-			var y = this.player.y;
-			var that = this;
-			clearInterval(this.water_use_interval);
-			this.water_use_interval = setInterval(function() {
-				if (that.player.x == x &&
-					that.player.y == y &&
-					that.keys.space) {
-					if (that.player.water >= 25) {
-						that.plant_list[y][x].heal(1);
-						that.player.remove_water(25);
+		//var p = this.plant_list[this.player.y][this.player.x];
+		//var state = p.get_state();
+		//if (state != 'plant die' &&
+		//	state != 'plant spawn' &&
+		//	state != 'plant hp5') {
+		//	var x = this.player.x;
+		//	var y = this.player.y;
+		var that = this;
+		this.player.display_pouring(true);
+		clearInterval(this.water_use_interval);
+		this.water_use_interval = setInterval(function() {
+			if (that.keys.space) {
+				if (that.player.water >= 25 && that.player.x !== -1 &&
+					(that.player.x != that.water_dock.grid_x ||
+					that.player.y != that.water_dock.grid_y)) {
+					var p = that.plant_list[
+						that.player.y][
+						that.player.x];
+					var state = p.get_state();
+					if (state != 'plant die' &&
+						state != 'plant spawn') {
+							p.heal(1);
 					}
 				}
-				else {
-					console.log('clr');
-					clearInterval(that.water_use_interval);
-				}
-			}, 1000);
-		}
+				that.player.remove_water(25);
+			}
+			else {
+
+				that.player.display_pouring(false);
+				clearInterval(that.water_use_interval);
+			}
+		}, 1000);
 	},
 
 	use_salt: function() {
@@ -366,6 +369,7 @@ var Game = {
  */
 window.onload = function() {
 	console.log('ready');
+	document.getElementById('loading').innerHTML = '';
 	var game = Object.create(Game);
 	game.create();
 	document.addEventListener('keydown', function(e) { game.on_keydown(e); });

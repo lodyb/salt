@@ -5,6 +5,7 @@
 var Player = {
 
 	element: null,
+	element_item: null,
 	parent: null,
 	x: -1,
 	y: -1,
@@ -12,27 +13,42 @@ var Player = {
 	salt: 100,
 	water: 0,
 	seeds: 2,
+	seeds_ui: null,
+	water_ui: null,
 
 	create: function(parent) {
 		this.parent = parent;
+		this.seeds_ui = document.getElementById('seeds');
+		this.water_ui = document.getElementById('water');
 		this.element = document.createElement('div');
 		this.element.setAttribute('class', 'player');
 		this.parent.element.appendChild(this.element);
 		this.element.style.position = 'absolute';
+		this.element_item = document.createElement('div');
+		this.element_item.setAttribute('class', 'item seeds');
+		this.element.appendChild(this.element_item);
 		this.set_pos(-1, -1);
 		console.log('added Player');
+	},
+
+	display_item: function(s) {
+		console.log(this.element_item.getAttribute('class'));
+		this.element_item.setAttribute('class', s);
 	},
 
 	switch_item: function() {
 		switch (this.item) {
 			case 'seed':
 				this.item = 'watering_can';
+				this.display_item('item water');
 				break;
 			case 'watering_can':
 				this.item = 'salt';
+				this.display_item('item salt');
 				break;
 			case 'salt':
 				this.item = 'seed';
+				this.display_item('item seed');
 				break;
 		}
 		/* draw item */
@@ -47,18 +63,35 @@ var Player = {
 	add_water: function(n) {
 		this.water += n;
 		if (this.water > 100) this.water = 100;
+		this.display_water();
 		console.log('water changed to ', this.water);
+	},
+
+	display_pouring: function (b) {
+		if (this.item != 'watering_can') return;
+		if (b) this.display_item('item water active');
+		else this.display_item('item water');
 	},
 
 	remove_water: function(n) {
 		this.water -= n;
 		if (this.water < 0) this.water = 0;
+		this.display_water();
 		console.log('water changed to ', this.water);
+	},
+
+	display_water: function() {
+		this.water_ui.style.width = this.water.toString() + 'px';
+	},
+
+	display_seeds: function() {
+		this.seeds_ui.innerHTML = this.seeds.toString();
 	},
 
 	remove_seeds: function(n) {
 		this.seeds = this.seeds -n;
 		if (this.seeds < 0) this.seeds = 0;
+		this.display_seeds();
 		console.log('n seeds changed to ', this.seeds);
 	},
 
