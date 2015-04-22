@@ -15,18 +15,38 @@ var KeyCodes = {
  */
 var Game = {
 
+	/**
+	 * this's dom element - div
+	 */
 	element: null,
-	player: null,
+
+	/**
+	 * unused
+	 */
 	difficulty: 1,
+
+	/**
+	 * entities
+	 */
+	player: null,
 	plant_list: [],
 	enemy_list: [],
+
+	/**
+	 * dom element for timer text plus it's incrementing value
+	 */
 	timer: null,
 	tick: 0,
+
 	started: false,
 	ended: false,
-	/* grid_x/grid_y is the location relative to the plant list */
+
+	/**
+	 * grid_x/grid_y is the location relative to the plant list
+	 */
 	salt_dock: {x: 20, y: 200, grid_x: -1, grid_y: -1},
 	water_dock: {x: 790, y: 220, grid_x: 3, grid_y: 0},
+
 	keys: {
 		up: false, down: false, left: false, right: false,
 		space: false, q: false,
@@ -42,8 +62,10 @@ var Game = {
 	snail_interval: null,
 	timer_interval: null,
 
+	/**
+	 * init
+	 */
 	create: function() {
-		console.log('init game');
 		this.element = document.getElementsByTagName('main')[0];
 		this.timer = document.getElementById('timer');
 		this.timer.innerHTML = 'Score: 0';
@@ -57,6 +79,9 @@ var Game = {
 		]);
 	},
 
+	/**
+	 * reset game back to init condition given any state
+	 */
 	reset: function() {
 		clearInterval(this.water_interval);
 		clearInterval(this.water_use_interval);
@@ -76,6 +101,9 @@ var Game = {
 		}
 	},
 
+	/**
+	 * initialize plants and add to array
+	 */
 	add_plants: function(arr) {
 		for (var i = 0; i < arr.length; i++) {
 			this.plant_list.push([]);
@@ -88,6 +116,9 @@ var Game = {
 		}
 	},
 
+	/**
+	 * return true if there is a snail eating a plant at x, y
+	 */
 	has_snail: function(x, y) {
 		for (var i = 0; i < this.enemy_list.length; i++) {
 			if (this.enemy_list[i].x == x && this.enemy_list[i].y == y) {
@@ -97,6 +128,9 @@ var Game = {
 		return false;
 	},
 
+	/**
+	 * return object of a snail eating a plant at x, y (else null)
+	 */
 	get_snail: function(x, y) {
 		for (var i = 0; i < this.enemy_list.length; i++) {
 			if (this.enemy_list[i].x == x && this.enemy_list[i].y == y) {
@@ -106,9 +140,12 @@ var Game = {
 		return null;
 	},
 
+	/**
+	 * attach snail to a random existing plant
+	 * game ended if no plant exists
+	 */
 	add_snail: function() {
 		pos_l = [];
-		console.log('game started');
 		for (var y = 0; y < this.plant_list.length; y++) {
 			for (var x = 0; x < this.plant_list[y].length; x++) {
 				var p = this.plant_list[y][x];
@@ -130,14 +167,18 @@ var Game = {
 		else {
 			// end
 			clearInterval(this.timer_interval);
-	clearInterval(this.snail_interval);
+			clearInterval(this.snail_interval);
 			this.timer.innerHTML = 'finished with score: ' +
 				this.tick.toString() +
-				' -- press enter to replay!';
+				' - press enter to replay!';
 			this.ended = true;
 		}
 	},
 
+	/**
+	 * add the first snail and start a timer to add more infinitely
+	 * also give the player extra seeds
+	 */
 	init_snails: function() {
 		this.add_snail();
 		var that = this;
@@ -148,8 +189,10 @@ var Game = {
 		}, 8000);
 	},
 
+	/**
+	 * player used a seed
+	 */
 	use_seed: function() {
-		console.log('use seed');
 		if (this.player.x == -1 ||
 			(this.player.x == this.water_dock.grid_x &&
 			this.player.y == this.water_dock.grid_y))
@@ -161,11 +204,11 @@ var Game = {
 				this.player.display_seed_drop();
 				if (!this.started) {
 					this.started = true;
-					console.log('started');
 					var that = this;
 					that.tick = 0;
 					this.timer_interval = setInterval(function() {
-						that.timer.innerHTML = 'Score: ' + (that.tick++).toString();
+						that.timer.innerHTML = 'Score: ' + 
+							(that.tick++).toString();
 					}, 500);
 					setTimeout(function() { that.init_snails(); },
 						10000);
@@ -175,9 +218,11 @@ var Game = {
 		}
 	},
 
+	/**
+	 * player recharging salt
+	 */
 	use_salt_dock: function() {
 		if (this.player.salt >= 100) return;
-		console.log('refil salt');
 		var that = this;
 		clearInterval(this.salt_interval);
 		this.salt_interval = setInterval(function() {
@@ -194,9 +239,11 @@ var Game = {
 		}, 25);
 	},
 
+	/**
+	 * player recharging water
+	 */
 	use_water_dock: function() {
 		if (this.player.water >= 100) return;
-		console.log('refill water');
 		var that = this;
 		clearInterval(this.water_interval);
 		this.water_interval = setInterval(function() {
@@ -213,8 +260,10 @@ var Game = {
 		}, 25);
 	},
 
+	/**
+	 * player use water
+	 */
 	use_water: function() {
-		console.log('use water');
 		var that = this;
 		this.player.display_pouring(true);
 		clearInterval(this.water_use_interval);
@@ -242,8 +291,10 @@ var Game = {
 		}, 1000);
 	},
 
+	/**
+	 * player use salt
+	 */
 	use_salt: function() {
-		console.log('use salt');
 		var that = this;
 		this.player.display_salt_pouring(true);
 		clearInterval(this.salt_use_interval);
@@ -253,10 +304,8 @@ var Game = {
 					that.player.x != -1 &&
 					(that.player.x != that.water_dock.grid_x ||
 					that.player.y != that.water_dock.grid_y)) {
-					console.log('.new');
 					if (that.has_snail(that.player.x,
 						that.player.y)) {
-						console.log('mew');
 						that.get_snail(that.player.x,
 							that.player.y).die();
 					}
@@ -271,11 +320,9 @@ var Game = {
 	},
 
 	/**
-	 * input
+	 * input - move up
 	 */
-
 	move_up: function() {
-		console.log('move_up');
 		var pos = this.player.get_pos();
 		if (pos.x == -1 || pos.y == 0 ||
 			(pos.x == this.water_dock.grid_x && pos.y == 0))
@@ -316,8 +363,10 @@ var Game = {
 		}
 	},
 
+	/**
+	 * input - move down
+	 */
 	move_down: function() {
-		console.log('move_down');
 		var pos = this.player.get_pos();
 		if (pos.x == -1 ||
 			(pos.x == this.water_dock.grid_x && pos.y == 0) ||
@@ -359,6 +408,9 @@ var Game = {
 		}
 	},
 
+	/**
+	 * input - move left
+	 */
 	move_left: function() {
 		var pos = this.player.get_pos();
 		if (pos.x == this.water_dock.grid_x) {
@@ -373,8 +425,10 @@ var Game = {
 		}
 	},
 
+	/**
+	 * input - move right
+	 */
 	move_right: function() {
-		console.log('move_right');
 		var pos = this.player.get_pos();
 		if (pos.x == this.water_dock.grid_x) return;
 		if (pos.x == -1) {
@@ -384,13 +438,16 @@ var Game = {
 			this.player.set_pos(pos.x + 1, pos.y);
 		}
 		else if (pos.x != this.water_dock.grid_x && pos.y == 0) {
-			this.player.set_pos(this.water_dock.grid_x, this.water_dock.grid_y);
+			this.player.set_pos(this.water_dock.grid_x,
+				this.water_dock.grid_y);
 			this.use_water_dock();
 		}
 	},
 
+	/**
+	 * input - use space
+	 */
 	do_space: function() {
-		console.log('do_space');
 		switch (this.player.item) {
 			case 'seed':
 				this.use_seed();
@@ -404,20 +461,25 @@ var Game = {
 		}
 	},
 
+	/**
+	 * input - use q
+	 */
 	do_q: function() {
-		console.log('do_q');
 		this.player.switch_item();
-		console.log('current_item: ', this.player.item);
 	},
 
+	/**
+	 * input - processing keydown
+	 */
 	on_keydown: function(e) {
-
 		var c = (e.keyCode ? e.keyCode : e.which);
 
+		/**
+		 * special case when the game is over
+		 */
 		if (this.ended) {
 			/* reset game */
 			if (c == 13) {
-				console.log('reset');
 				if (e.stopPropagation) e.stopPropagation();
 				e.preventDefault();
 				this.reset();
@@ -481,6 +543,9 @@ var Game = {
 		}
 	},
 
+	/**
+	 * input - processing keyup
+	 */
 	on_keyup: function(e) {
 		var c = (e.keyCode ? e.keyCode : e.which);
 		if (c == KeyCodes.w || c == KeyCodes.up) {
@@ -521,16 +586,15 @@ var Game = {
  * init game after all resources have loaded
  */
 window.onload = function() {
-	console.log('ready');
 	document.getElementById('loading').innerHTML = '';
 	var game = Object.create(Game);
 	game.create();
-	document.addEventListener('keydown', function(e) { game.on_keydown(e); });
-	document.addEventListener('keyup', function(e) { game.on_keyup(e); });
+	document.addEventListener('keydown', function(e) {
+		game.on_keydown(e);
+	});
+	document.addEventListener('keyup', function(e) {
+		game.on_keyup(e);
+	});
 };
 
-/**
- * load/inject resources
- */
-console.log('loading');
 

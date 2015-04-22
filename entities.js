@@ -4,22 +4,52 @@
  */
 var Player = {
 
+	/**
+	 * this's dom elements - div
+	 */
 	element: null,
 	element_item: null,
 	element_item_fx: null,
+
+	/**
+	 * parent object - Game
+	 */
 	parent: null,
+
+	/**
+	 * location relative to Game's plant list
+	 */
 	x: -1,
 	y: -1,
+
+	/**
+	 * active item
+	 */
 	item: 'seed',
+
+	/**
+	 * item resource count
+	 */
 	salt: 100,
 	water: 0,
 	seeds: 2,
+
+	/**
+	 * dom elements for the hud/item resource count display
+	 */
 	seeds_ui: null,
 	water_ui: null,
 	salt_ui: null,
+
+	/**
+	 * used for water pour effect
+	 */
 	display_pouring_interval: null,
 	fx_text: 'goodwater',
 
+	/**
+	 * init
+	 */
 	create: function(parent) {
 		this.parent = parent;
 		this.seeds_ui = document.getElementById('seeds');
@@ -35,9 +65,11 @@ var Player = {
 		this.element_item_fx = document.createElement('span');
 		this.element_item.appendChild(this.element_item_fx);
 		this.set_pos(-1, -1);
-		console.log('added Player');
 	},
 
+	/**
+	 * reset this back to init condition given any state
+	 */
 	reset: function() {
 		clearInterval(this.display_pouring_interval);
 		this.element_item_fx.innerHTML = '';
@@ -51,11 +83,16 @@ var Player = {
 		this.display_seeds();
 	},
 
+	/**
+	 * set active item css display
+	 */
 	display_item: function(s) {
-		console.log(this.element_item.getAttribute('class'));
 		this.element_item.setAttribute('class', s);
 	},
 
+	/**
+	 * rotate through items
+	 */
 	switch_item: function() {
 		switch (this.item) {
 			case 'seed':
@@ -71,26 +108,31 @@ var Player = {
 				this.display_item('item seeds');
 				break;
 		}
-		/* draw item */
 	},
 
+	/**
+	 * add to the salt resource count and display on hud
+	 */
 	add_salt: function(n) {
 		this.salt += n;
 		if (this.salt > 100) this.salt = 100;
 		this.display_salt();
-		console.log('salt changes to ', this.salt);
 	},
 
+	/**
+	 * add to the water resource count and display on hud
+	 */
 	add_water: function(n) {
 		this.water += n;
 		if (this.water > 100) this.water = 100;
 		this.display_water();
-		console.log('water changed to ', this.water);
 	},
 
+	/**
+	 * effect for dropping a seed to the ground
+	 */
 	display_seed_drop: function() {
 		if (this.item != 'seed') return;
-		console.log('why no animated?');
 		this.display_item( 'item seeds active');
 		var that = this;
 		setTimeout(function() {
@@ -100,6 +142,9 @@ var Player = {
 		}, 600);
 	},
 
+	/**
+	 * effect for pouring salt
+	 */
 	display_salt_pouring: function(b) {
 		if (b) {
 			this.display_item('item salt active');
@@ -107,8 +152,11 @@ var Player = {
 		else {
 			this.display_item('item salt');
 		}
-	},	
+	},
 
+	/**
+	 * effect for pouring water - including scrolling text
+	 */
 	display_pouring: function (b) {
 		if (this.item != 'watering_can') return;
 		if (b) {
@@ -117,7 +165,8 @@ var Player = {
 			var len = this.fx_text.length;
 			var start = 0;
 			this.display_pouring_interval = setInterval(function() {
-				if (that.item == 'watering_can' && that.water >= 25 &&
+				if (that.item == 'watering_can' &&
+					that.water >= 25 &&
 					that.parent.keys.space) {
 					var s = '';
 					while (s.length < 6) {
@@ -140,39 +189,58 @@ var Player = {
 		}
 	},
 
+	/**
+	 * remove from salt resource count and display on hud
+	 */
 	remove_salt: function(n) {
 		this.salt -= n;
 		if (this.salt < 0) this.salt = 0;
 		this.display_salt();
-		console.log('salt changed to ', this.salt);
 	},
 
+	/**
+	 * remove from water resource count and display on hud
+	 */
 	remove_water: function(n) {
 		this.water -= n;
 		if (this.water < 0) this.water = 0;
 		this.display_water();
-		console.log('water changed to ', this.water);
 	},
 
+	/**
+	 * hud display - salt
+	 */
 	display_salt: function() {
 		this.salt_ui.style.width = this.salt.toString() + 'px';
 	},
 
+	/**
+	 * hud display - water
+	 */
 	display_water: function() {
 		this.water_ui.style.width = this.water.toString() + 'px';
 	},
 
+	/**
+	 * hud display - seeds
+	 */
 	display_seeds: function() {
 		this.seeds_ui.innerHTML = this.seeds.toString();
 	},
 
+	/**
+	 * remove from seed resource count and display on hud
+	 */
 	remove_seeds: function(n) {
 		this.seeds = this.seeds -n;
 		if (this.seeds < 0) this.seeds = 0;
 		this.display_seeds();
-		console.log('n seeds changed to ', this.seeds);
 	},
 
+	/**
+	 * set position of player, by relation or absolutely
+	 * depending on input x, y
+	 */
 	set_pos: function(x, y) {
 		if (x == -1) {
 			this.x = x; this.y = y;
@@ -199,29 +267,12 @@ var Player = {
 		}
 	},
 
+	/**
+	 * obsolete
+	 */
 	get_pos: function() {
 		return {x: this.x, y: this.y};
 	},
-
-	happy: function() {
-		this.element.setAttribute('class', 'player happy');
-	},
-
-	die: function() {
-		this.element.setAttribute('class', 'player die');
-	},
-
-	full_salt: function() {
-		this.element.setAttribute('class', 'player full_salt');
-	},
-
-	plant: function() {
-		this.element.setAttribute('class', 'player plant');
-	},
-
-	worry: function() {
-		this.element.setAttribute('class', 'player worry');
-	}
 
 };
 
@@ -230,12 +281,30 @@ var Player = {
  */
 var Plant = {
 
+	/**
+	 * this's dom element - div
+	 */
 	element: null,
+
+	/**
+	 * parent object - Game
+	 */
 	parent: null,
+
+	/**
+	 * health - 0-5
+	 */
 	health: 1,
+
+	/**
+	 * location in pixels
+	 */
 	x: 0,
 	y: 0,
 
+	/**
+	 * init
+	 */
 	create: function(parent) {
 		this.parent = parent;
 		this.element = document.createElement('div');
@@ -243,14 +312,19 @@ var Plant = {
 		this.parent.element.appendChild(this.element);
 		this.element.style.position = 'absolute';
 		this.set_pos(0, 0);
-		console.log('added Plant');
 	},
 
+	/**
+	 * reset this back to init condition given any state
+	 */
 	reset: function() {
 		this.element.setAttribute('class', 'plant die');
 		this.health = 1;
 	},
 
+	/**
+	 * spawn fade effect
+	 */
 	spawn: function() {
 		this.element.setAttribute('class', 'plant spawn');
 		var that = this;
@@ -259,34 +333,52 @@ var Plant = {
 		}, 1000);
 	},
 
+	/**
+	 * set location absolutely in pixels
+	 */
 	set_pos: function(x, y) {
 		this.x = x; this.y = y;
 		this.element.style.left = x.toString() + 'px';
 		this.element.style.top = y.toString() + 'px';
 	},
 
+	/**
+	 * obsolete
+	 */
 	get_pos: function() {
 		return {x: this.x, y: this.y};
 	},
 
+	/**
+	 * return the class of object - used to determine dead/alive states
+	 */
 	get_state: function() {
 		return this.element.getAttribute('class');
 	},
 
+	/**
+	 * heal the plant by n hit points
+	 */
 	heal: function(n) {
 		if (this.health == 0) return;
 		this.health += n;
 		if (this.health > 5) this.health = 5;
 		this.element.setAttribute('class', 'plant hp' + this.health.toString());
-		console.log('health changed to', this.health, this.element.getAttribute('class'));
 	},
 
+	/**
+	 * damage the plant by n hit points
+	 * the plants are not really damaged they are just hiding more
+	 */
 	hurt: function(dmg) {
 		this.health -= dmg;
 		if (this.health < 1) this.die();
 		else this.element.setAttribute('class', 'plant hp' + this.health.toString());
 	},
 
+	/**
+	 * the plants never die - don't beleive this!
+	 */
 	die: function() {
 		this.element.setAttribute('class', 'plant die');
 	}
@@ -298,12 +390,30 @@ var Plant = {
  */
 var Enemy = {
 
+	/**
+	 * this's dom element - div
+	 */
 	element: null,
+
+	/**
+	 * parent object - Game
+	 */
 	parent: null,
+
+	/**
+	 * location relative to Game's plant list
+	 */
 	x: 0,
 	y: 0,
+
+	/**
+	 * interval for damage dealing
+	 */
 	nom_interval: null,
 
+	/**
+	 * init
+	 */
 	create: function(parent) {
 		this.parent = parent;
 		this.element = document.createElement('div');
@@ -311,7 +421,6 @@ var Enemy = {
 		this.parent.element.appendChild(this.element);
 		this.element.style.position = 'absolute';
 		this.set_pos(0, 0);
-		console.log('added Enemy');
 		var that = this;
 		this.nom_interval = setInterval(function() {
 			var p = that.parent.plant_list[that.y][that.x];
@@ -326,6 +435,9 @@ var Enemy = {
 		}, 1000);
 	},
 
+	/**
+	 * move to next plant - very lazily
+	 */
 	move_next: function() {
 		this.die();
 		var that = this;
@@ -334,6 +446,10 @@ var Enemy = {
 		}, 1000);
 	},
 
+	/**
+	 * when salt effects the snail - they don't really die!
+	 * just not hungry anymore - despawn
+	 */
 	die: function() {
 		clearInterval(this.nom_interval);
 		var r = null;
@@ -347,12 +463,17 @@ var Enemy = {
 		this.element.setAttribute('class', 'enemy die');
 		var that = this;
 		setTimeout(function() {
-			/* please forgive me */
+			/**
+ 			 * please forgive me for this polution
+ 			 */
 			that.element.setAttribute('class', '');
 			that.element.style.display = 'none';
 		}, 1000);
 	},
 
+	/**
+	 * set location relative to Game's plant list
+	 */
 	set_pos: function(x, y) {
 		this.x = x; this.y = y;
 		this.element.style.left =
@@ -363,7 +484,9 @@ var Enemy = {
 			this.y][this.x].y -45).toString() + 'px';
 	},
 
-
+	/**
+	 * obsolete
+	 */
 	get_pos: function() {
 		return {x: this.x, y: this.y};
 	},
