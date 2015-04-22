@@ -38,6 +38,19 @@ var Player = {
 		console.log('added Player');
 	},
 
+	reset: function() {
+		clearInterval(this.display_pouring_interval);
+		this.element_item_fx.innerHTML = '';
+		this.seeds = 2;
+		this.water = 0;
+		this.salt = 100;
+		this.item = 'seed';
+		this.display_item('item seeds');
+		this.display_salt();
+		this.display_water();
+		this.display_seeds();
+	},
+
 	display_item: function(s) {
 		console.log(this.element_item.getAttribute('class'));
 		this.element_item.setAttribute('class', s);
@@ -231,6 +244,11 @@ var Plant = {
 		this.element.style.position = 'absolute';
 		this.set_pos(0, 0);
 		console.log('added Plant');
+	},
+
+	reset: function() {
+		this.element.setAttribute('class', 'plant die');
+		this.health = 1;
 	},
 
 	spawn: function() {

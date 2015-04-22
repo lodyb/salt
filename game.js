@@ -21,7 +21,9 @@ var Game = {
 	plant_list: [],
 	enemy_list: [],
 	timer: null,
+	tick: 0,
 	started: false,
+	ended: false,
 	/* grid_x/grid_y is the location relative to the plant list */
 	salt_dock: {x: 20, y: 200, grid_x: -1, grid_y: -1},
 	water_dock: {x: 790, y: 220, grid_x: 3, grid_y: 0},
@@ -44,6 +46,7 @@ var Game = {
 		console.log('init game');
 		this.element = document.getElementsByTagName('main')[0];
 		this.timer = document.getElementById('timer');
+		this.timer.innerHTML = 'Score: 0';
 		this.player = Object.create(Player); this.player.create(this);
 		this.player.set_pos(this.salt_dock.grid_x, this.salt_dock.grid_y);
 
@@ -52,6 +55,25 @@ var Game = {
 			[{x: 106, y: 378}, {x: 329, y: 356}, {x: 550, y: 363}, {x: 758, y: 390}],
 			[{x: 152, y: 486}, {x: 375, y: 476}, {x: 589, y: 491}, {x: 790, y: 532}],
 		]);
+	},
+
+	reset: function() {
+		clearInterval(this.water_interval);
+		clearInterval(this.water_use_interval);
+		clearInterval(this.salt_interval);
+		clearInterval(this.salt_use_interval);
+		clearInterval(this.snail_interval);
+		clearInterval(this.timer_interval);
+		this.timer.innerHTML = 'Score: 0';
+		this.ended = false;
+		this.started = false;
+		this.player.reset();
+		this.player.set_pos(this.salt_dock.grid_x, this.salt_dock.grid_y);
+		for (var y = 0; y < this.plant_list.length; y++) {
+			for (var x = 0; x < this.plant_list[y].length; x++) {
+				this.plant_list[y][x].reset();
+			}
+		}
 	},
 
 	add_plants: function(arr) {
@@ -88,7 +110,7 @@ var Game = {
 		pos_l = [];
 		console.log('game started');
 		for (var y = 0; y < this.plant_list.length; y++) {
-			for (var x = 0; x < this.plant_list[0].length; x++) {
+			for (var x = 0; x < this.plant_list[y].length; x++) {
 				var p = this.plant_list[y][x];
 				var state = p.get_state();
 				if (state == 'plant spawn' || state == 'plant die')
@@ -108,9 +130,10 @@ var Game = {
 		else {
 			// end
 			clearInterval(this.timer_interval);
-			clearInterval(this.snail_interval);
+	clearInterval(this.snail_interval);
 			this.timer.innerHTML = 'finished with score: ' +
-				this.tick.toString();
+				this.tick.toString() +
+				' -- press enter to replay!';
 			this.ended = true;
 		}
 	},
@@ -142,7 +165,7 @@ var Game = {
 					var that = this;
 					that.tick = 0;
 					this.timer_interval = setInterval(function() {
-						that.timer.innerHTML = (that.tick++).toString();
+						that.timer.innerHTML = 'Score: ' + (that.tick++).toString();
 					}, 500);
 					setTimeout(function() { that.init_snails(); },
 						10000);
@@ -192,13 +215,6 @@ var Game = {
 
 	use_water: function() {
 		console.log('use water');
-		//var p = this.plant_list[this.player.y][this.player.x];
-		//var state = p.get_state();
-		//if (state != 'plant die' &&
-		//	state != 'plant spawn' &&
-		//	state != 'plant hp5') {
-		//	var x = this.player.x;
-		//	var y = this.player.y;
 		var that = this;
 		this.player.display_pouring(true);
 		clearInterval(this.water_use_interval);
@@ -230,7 +246,7 @@ var Game = {
 		console.log('use salt');
 		var that = this;
 		this.player.display_salt_pouring(true);
-		clearInterval(this.salt_user_interval);
+		clearInterval(this.salt_use_interval);
 		this.salt_use_interval = setInterval(function() {
 			if (that.keys.space && that.player.item == 'salt') {
 				if (that.player.salt >= 25 &&
@@ -395,49 +411,69 @@ var Game = {
 	},
 
 	on_keydown: function(e) {
-		if (e.repeat) return;
+
+		var c = (e.keyCode ? e.keyCode : e.which);
+
 		if (this.ended) {
 			/* reset game */
-			console.log('reset');
+			if (c == 13) {
+				console.log('reset');
+				if (e.stopPropagation) e.stopPropagation();
+				e.preventDefault();
+				this.reset();
+				return;
+			}
 		}
-		var c = (e.keyCode ? e.keyCode : e.which);
+
 		if (c == KeyCodes.w || c == KeyCodes.up) {
-			if (!this.keys.up) {
+			if (e.stopPropagation) e.stopPropagation();
+			e.preventDefault();
+			if (!this.keys.up && !e.repeat && !this.ended) {
 				this.keys.up = true;
 				// move up
 				this.move_up();
 			}
 		}
 		else if (c == KeyCodes.a || c == KeyCodes.left) {
-			if (!this.keys.left) {
+			if (e.stopPropagation) e.stopPropagation();
+			e.preventDefault();
+			if (!this.keys.left && !e.repeat && !this.ended) {
 				this.keys.left = true;
 				// move left
 				this.move_left();
 			}
 		}
 		else if (c == KeyCodes.s || c == KeyCodes.down) {
-			if (!this.keys.down) {
+			if (e.stopPropagation) e.stopPropagation();
+			e.preventDefault();
+			if (!this.keys.down && !e.repeat && !this.ended) {
 				this.keys.down = true;
 				// move down
 				this.move_down();
 			}
 		}
 		else if (c == KeyCodes.d || c == KeyCodes.right) {
-			if (!this.keys.right) {
+			if (e.stopPropagation) e.stopPropagation();
+			e.preventDefault();
+			if (!this.keys.right && !e.repeat && !this.ended) {
 				this.keys.right = true;
 				// move right
 				this.move_right();
 			}
 		}
 		else if (c == KeyCodes.space) {
-			if (!this.keys.space) {
+			if (e.stopPropagation) e.stopPropagation();
+			e.preventDefault();
+			if (!this.keys.space && !e.repeat && !this.ended) {
 				this.keys.space = true;
 				// space
 				this.do_space();
 			}
 		}
 		else if (c == KeyCodes.q) {
-			if (!this.keys.q) {
+			if (e.stopPropagation) e.stopPropagation();
+			e.preventDefault();
+			if (!this.keys.q && !e.repeat && !this.ended) {
 				this.keys.q = true;
 				// q
 				this.do_q();
@@ -446,23 +482,35 @@ var Game = {
 	},
 
 	on_keyup: function(e) {
-		if (e.repeat) return;
 		var c = (e.keyCode ? e.keyCode : e.which);
-		if (c == KeyCodes.w || c == KeyCodes.up)
+		if (c == KeyCodes.w || c == KeyCodes.up) {
+			if (e.stopPropagation) e.stopPropagation();
+			e.preventDefault();
 			this.keys.up = false;
+		}
 		else if (c == KeyCodes.a || c == KeyCodes.left) {
+			if (e.stopPropagation) e.stopPropagation();
+			e.preventDefault();
 			this.keys.left = false;
 		}
 		else if (c == KeyCodes.s || c == KeyCodes.down) {
+			if (e.stopPropagation) e.stopPropagation();
+			e.preventDefault();
 			this.keys.down = false;
 		}
 		else if (c == KeyCodes.d || c == KeyCodes.right) {
+			if (e.stopPropagation) e.stopPropagation();
+			e.preventDefault();
 			this.keys.right = false;
 		}
 		else if (c == KeyCodes.space) {
+			if (e.stopPropagation) e.stopPropagation();
+			e.preventDefault();
 			this.keys.space = false;
 		}
 		else if (c == KeyCodes.q) {
+			if (e.stopPropagation) e.stopPropagation();
+			e.preventDefault();
 			this.keys.q = false;
 		}
 	}
